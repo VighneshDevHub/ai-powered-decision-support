@@ -25,8 +25,8 @@ export default function LandingPage() {
             <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
             
                 <Hero isDarkMode={isDarkMode} />
-                <Problem />
-                <Workflow />
+                <Problem isDarkMode={isDarkMode}/>
+                <Workflow isDarkMode={isDarkMode}/>
                 <Features />
                 <Pricing isDarkMode={isDarkMode} />
                 <FAQ />

@@ -111,7 +111,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                             <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-violet-600 rounded-[0.75rem] flex items-center justify-center shadow-[0_8px_20px_rgba(212,255,74,0.3)] group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 overflow-hidden">
                                 <Layers className="w-5 h-5 text-black relative z-10" />
                             </div>
-                            <div className="absolute -inset-2 bg-[#d4ff4a]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <div className="absolute -inset-2 bg-[#ffffff]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         </div>
                         <span className={`text-xl font-black tracking-tighter uppercase transition-colors duration-500 ${isDarkMode ? 'text-white' : 'text-gray-950'}`}>
                             Intellexa

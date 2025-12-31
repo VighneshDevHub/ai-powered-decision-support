@@ -1,10 +1,21 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-export default function Workflow() {
+const Workflow: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   return (
-    <section className="py-24 bg-white">
+    <section
+      id="workflow"
+      className={`relative py-40 px-6 overflow-hidden transition-colors duration-700 ${
+        isDarkMode ? "bg-[#030303]" : "bg-[#fafafa]"
+      }`}
+    >
+      {/* Background Glows */}
+      <div
+        className={`absolute top-1/2 left-1/4 w-[600px] h-[600px] blur-[200px] rounded-full opacity-20 pointer-events-none ${
+          isDarkMode ? "bg-[#3b82f6]/40" : "bg-[#3b82f6]/20"
+        }`}
+      />
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-sm font-medium">
@@ -20,23 +31,25 @@ export default function Workflow() {
           <div className="space-y-8">
             {[
               {
-                title: '1. Upload Your Data',
-                desc: 'Simply upload your data to our secure platform. We support various file formats to ensure seamless integration.'
+                title: "1. Upload Your Data",
+                desc: "Simply upload your data to our secure platform. We support various file formats to ensure seamless integration.",
               },
               {
-                title: '2. Click Start',
-                desc: 'Our AI processes and analyzes your data, extracting valuable insights and patterns automatically.'
+                title: "2. Click Start",
+                desc: "Our AI processes and analyzes your data, extracting valuable insights and patterns automatically.",
               },
               {
-                title: '3. Get Actionable Insights',
-                desc: 'Receive clear recommendations based on the analysis. Make data-driven decisions and improve business outcomes.'
-              }
+                title: "3. Get Actionable Insights",
+                desc: "Receive clear recommendations based on the analysis. Make data-driven decisions and improve business outcomes.",
+              },
             ].map((step, i) => (
               <div key={i} className="relative pl-10">
                 <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-violet-600 text-white font-bold flex items-center justify-center shadow-sm">
                   {i + 1}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  {step.title}
+                </h3>
                 <p className="text-gray-600">{step.desc}</p>
               </div>
             ))}
@@ -78,3 +91,4 @@ export default function Workflow() {
   );
 }
 
+export default Workflow;
