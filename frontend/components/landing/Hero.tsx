@@ -23,27 +23,27 @@ const MetricCard: React.FC<MetricCardProps> = ({
     className={`p-3 rounded-xl border backdrop-blur-xl animate-float-slow transition-colors duration-500 ${
       isDarkMode
         ? "bg-white/5 border-white/10 shadow-2xl"
-        : "bg-white/60 border-blue-100 shadow-lg shadow-blue-500/5"
+        : "bg-white/80 border-blue-100 shadow-lg shadow-blue-500/5"
     }`}
     style={{ animationDelay: delay }}
   >
     <div
-      className={`text-[9px] font-[950] uppercase tracking-widest mb-1 ${
-        isDarkMode ? "opacity-50 text-white" : "text-slate-500"
+      className={`text-[9px] font-black uppercase tracking-widest mb-1 ${
+        isDarkMode ? "opacity-50 text-white" : "text-gray-500"
       }`}
     >
       {title}
     </div>
     <div className="flex items-end gap-2">
       <div
-        className={`text-xl font-[950] ${
-          isDarkMode ? "text-white" : "text-slate-900"
+        className={`text-xl font-black ${
+          isDarkMode ? "text-white" : "text-gray-900"
         }`}
       >
         {value}
       </div>
       <div
-        className={`text-[9px] font-[950] pb-1 ${
+        className={`text-[9px] font-black pb-1 ${
           isDarkMode ? "text-blue-400" : "text-blue-600"
         }`}
       >
@@ -109,7 +109,7 @@ const Hero: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
                   ></span>
                 </span>
                 <span
-                  className={`text-[10px] font-[950] uppercase tracking-widest ${
+                  className={`text-[10px] font-black uppercase tracking-widest ${
                     isDarkMode ? "text-blue-300" : "text-blue-700"
                   }`}
                 >
@@ -120,7 +120,7 @@ const Hero: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
               {/* Main Title */}
               {/* Main Title */}
               <h1
-                className={`text-4xl sm:text-6xl md:text-7xl lg:text-7xl font-[950] -tracking-wide leading-[0.9] lg:leading-[0.85] animate-reveal transition-colors duration-500 ${
+                className={`text-4xl sm:text-6xl md:text-7xl lg:text-7xl font-black -tracking-wide leading-[0.9] lg:leading-[0.85] animate-reveal transition-colors duration-500 ${
                   isDarkMode ? "text-white" : "text-gray-950"
                 }`}
               >
@@ -156,7 +156,7 @@ const Hero: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row items-center gap-4 animate-fade-in animation-delay-700">
                 <button
-                  className={`w-full sm:w-auto px-8 py-4 font-[950] uppercase tracking-tightest rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg group overflow-hidden relative ${
+                  className={`w-full sm:w-auto px-8 py-4 font-black uppercase tracking-tightest rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg group overflow-hidden relative ${
                     isDarkMode
                       ? "bg-blue-600 text-white shadow-blue-900/20"
                       : "bg-blue-600 text-white shadow-blue-500/30"
@@ -168,10 +168,10 @@ const Hero: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 </button>
                 <button
-                  className={`w-full sm:w-auto px-8 py-4 font-[950] uppercase tracking-tightest rounded-xl border transition-all hover:bg-white/5 active:scale-95 ${
+                  className={`w-full sm:w-auto px-8 py-4 font-black uppercase tracking-tightest rounded-xl border transition-all hover:bg-white/5 active:scale-95 ${
                     isDarkMode
                       ? "border-white/10 text-white"
-                      : "border-slate-200 text-slate-700 bg-white hover:bg-slate-50"
+                      : "border-gray-200 text-gray-700 bg-white hover:bg-gray-50"
                   }`}
                 >
                   Watch Intro
@@ -179,7 +179,7 @@ const Hero: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
               </div>
 
               <div
-                className={`text-[10px] font-[950] uppercase tracking-[0.2em] opacity-40 animate-fade-in animation-delay-700 ${
+                className={`text-[10px] font-black uppercase tracking-[0.2em] opacity-40 animate-fade-in animation-delay-700 ${
                   isDarkMode ? "text-white" : "text-slate-900"
                 }`}
               >
@@ -194,14 +194,14 @@ const Hero: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
                 {/* Inner Data Visualization Mock */}
                 <div className="relative  max-w-8xl group">
                   <div className="absolute -inset-2 rounded-3xl blur bg-gradient-to-r from-blue-500 to-violet-600 opacity-15 group-hover:opacity-25 transition-opacity duration-500" />
-                  <div className="relative rounded-3xl overflow-hidden border border-gray-200 shadow-2xl bg-white">
-                    <div className="h-12 border-b border-gray-100 flex items-center px-4 gap-4 bg-gray-50/60">
+                  <div className={`relative rounded-3xl overflow-hidden border shadow-2xl ${isDarkMode ? "bg-[#0a0a0a] border-white/10" : "bg-white border-gray-200"}`}>
+                    <div className={`h-12 border-b flex items-center px-4 gap-4 ${isDarkMode ? "bg-white/5 border-white/5" : "bg-gray-50/60 border-gray-100"}`}>
                       <div className="flex gap-2">
-                        <div className="w-3 h-3 rounded-full bg-red-400" />
-                        <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                        <div className="w-3 h-3 rounded-full bg-green-400" />
+                        <div className="w-3 h-3 rounded-full bg-slate-300" />
+                        <div className="w-3 h-3 rounded-full bg-slate-300" />
+                        <div className="w-3 h-3 rounded-full bg-slate-300" />
                       </div>
-                      <div className="flex-1 max-w-[240px] h-6 rounded bg-gray-200/60" />
+                      <div className={`flex-1 max-w-[240px] h-6 rounded ${isDarkMode ? "bg-white/10" : "bg-gray-200/60"}`} />
                     </div>
                     <div className="relative">
                       <Image
@@ -215,7 +215,7 @@ const Hero: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
                     </div>
                   </div>
                 </div>
-                <div className="mt-15 flex items-center justify-center gap-6 text-sm text-gray-600">
+                <div className={`mt-15 flex items-center justify-center gap-6 text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                   <div className="inline-flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
                     No setup required
@@ -263,12 +263,12 @@ const Hero: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
                       <Bot className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <div className="text-[8px] font-[950] uppercase tracking-widest text-blue-500">
+                      <div className="text-[8px] font-black uppercase tracking-widest text-blue-500">
                         AI Agent Active
                       </div>
                       <div
-                        className={`text-[10px] font-[950] ${
-                          isDarkMode ? "text-white" : "text-slate-900"
+                        className={`text-[10px] font-black ${
+                          isDarkMode ? "text-white" : "text-gray-900"
                         }`}
                       >
                         Reasoning Flow Ingested

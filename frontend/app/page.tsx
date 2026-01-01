@@ -27,12 +27,12 @@ export default function LandingPage() {
                 <Hero isDarkMode={isDarkMode} />
                 <Problem isDarkMode={isDarkMode}/>
                 <Workflow isDarkMode={isDarkMode}/>
-                <Features />
+                <Features isDarkMode={isDarkMode}/>
                 <Pricing isDarkMode={isDarkMode} />
-                <FAQ />
-                <CTA />
+                <FAQ isDarkMode={isDarkMode} />
+                <CTA isDarkMode={isDarkMode}/>
             </main>
-            <Footer />
+            <Footer isDarkMode={isDarkMode} />
             <style jsx>{`
                 @keyframes float {
                     0% { transform: translateY(0px) }

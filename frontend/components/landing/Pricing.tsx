@@ -74,7 +74,7 @@ const PricingCard: React.FC<{
   >
     {tier.highlighted && (
       <div
-        className={`absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[10px] font-[1000] uppercase tracking-[0.2em] italic ${
+        className={`absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] italic ${
           isDarkMode
             ? "bg-[#3b82f6] text-white"
             : "bg-[#2563eb] text-white animate-pulse"
@@ -94,7 +94,7 @@ const PricingCard: React.FC<{
       </h3>
       <div className="flex items-baseline gap-2">
         <span
-          className={`text-6xl font-[1000] tracking-tighter ${
+          className={`text-6xl font-black tracking-tighter ${
             isDarkMode ? "text-white" : "text-gray-950"
           }`}
         >
@@ -199,7 +199,7 @@ const Pricing: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
             </span>
           </div>
           <h2
-            className={`text-5xl md:text-7xl font-[1000] tracking-tighter leading-[0.9] ${
+            className={`text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] ${
               isDarkMode ? "text-white" : "text-gray-950"
             }`}
           >

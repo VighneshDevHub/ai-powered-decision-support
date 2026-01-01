@@ -88,7 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
 
     return (
         <>
-            <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] transition-all duration-500 ${isScrolled ? 'max-w-4xl' : 'max-w-5xl'}`}>
+            <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] transition-all duration-500 ${isScrolled ? 'max-w-5xl' : 'max-w-7xl'}`}>
                 <nav className={`
                     relative flex items-center justify-between px-6 lg:px-8 py-3 rounded-[2rem] border transition-all duration-700 
                     backdrop-blur-3xl backdrop-saturate-200 
@@ -108,8 +108,8 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                         className="flex items-center gap-4 group cursor-pointer relative z-50"
                     >
                         <div className="relative">
-                            <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-violet-600 rounded-[0.75rem] flex items-center justify-center shadow-[0_8px_20px_rgba(212,255,74,0.3)] group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 overflow-hidden">
-                                <Layers className="w-5 h-5 text-black relative z-10" />
+                            <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-violet-600 rounded-[0.75rem] flex items-center justify-center shadow-[0_8px_20px_rgba(59,130,246,0.3)] group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 overflow-hidden">
+                                <Layers className="w-5 h-5 text-white relative z-10" />
                             </div>
                             <div className="absolute -inset-2 bg-[#ffffff]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         </div>
@@ -133,7 +133,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                                 onMouseLeave={() => setHoveredIndex(null)}
                                 onClick={(e) => handleNavLinkClick(e, item)}
                                 className={`relative z-10 px-4 py-2 text-[12px] font-black uppercase tracking-[0.12em] transition-all duration-500 ${isDarkMode
-                                    ? (activeTab === item ? 'text-[#113097]' : 'text-gray-400 hover:text-white')
+                                    ? (activeTab === item ? 'text-[#3b82f6]' : 'text-gray-400 hover:text-white')
                                     : (activeTab === item ? 'text-black' : 'text-gray-500 hover:text-black')
                                     } ${hoveredIndex === index ? 'scale-105' : 'scale-100'}`}
                             >
@@ -143,7 +143,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                     </div>
 
                     {/* Action Buttons & Mobile Toggle */}
-                    <div className="flex items-center gap-3 lg:gap-6 relative z-50">
+                    <div className="flex items-center gap-3 lg:gap-4 relative z-50">
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={toggleTheme}
@@ -154,18 +154,18 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
 
                             <SignedOut>
                                 <SignInButton mode="modal">
-                                    <button className="hidden sm:block relative px-4 py-2.5 text-xs font-[950] uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-transparent border border-black/[0.08] text-gray-900 hover:bg-black/5">
+                                    <button className={`hidden sm:block relative px-4 py-2.5 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-transparent border ${isDarkMode ? "border-white/10 text-white hover:bg-white/5" : "border-black/[0.08] text-gray-900 hover:bg-black/5"}`}>
                                         Sign In
                                     </button>
                                 </SignInButton>
                                 <SignUpButton mode="modal">
-                                    <button className="hidden sm:block relative px-4 py-2.5 text-xs font-[950] uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-transparent border border-black/[0.08] text-gray-900 hover:bg-black/5">
+                                    <button className={`hidden sm:block relative px-4 py-2.5 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-transparent border ${isDarkMode ? "border-white/10 text-white hover:bg-white/5" : "border-black/[0.08] text-gray-900 hover:bg-black/5"}`}>
                                         Sign Up
                                     </button>
                                 </SignUpButton>
                                 <Link
                                     href="/dashboard"
-                                    className="hidden sm:block relative px-6 py-2.5 text-xs font-[950] uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-[0_8px_30px_rgba(212,255,74,0.3)] hover:scale-[1.05]"
+                                    className="hidden sm:block relative px-6 py-2.5 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-[0_8px_30px_rgba(59,130,246,0.3)] hover:scale-[1.05]"
                                 >
                                     Get Started
                                 </Link>
@@ -173,7 +173,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                             <SignedIn>
                                 <Link
                                     href="/dashboard"
-                                    className="hidden sm:block relative px-6 py-2.5 text-xs font-[950] uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-[0_8px_30px_rgba(212,255,74,0.3)] hover:scale-[1.05]"
+                                    className="hidden sm:block relative px-6 py-2.5 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-[0_8px_30px_rgba(59,130,246,0.3)] hover:scale-[1.05]"
                                 >
                                     Open Dashboard
                                 </Link>
@@ -228,7 +228,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                                     <SignInButton mode="modal">
                                         <button
                                             onClick={() => setIsMobileMenuOpen(false)}
-                                            className="w-full py-4 rounded-2xl bg-transparent border border-white/20 text-white font-black uppercase tracking-widest italic text-center"
+                                            className={`w-full py-4 rounded-2xl bg-transparent border font-black uppercase tracking-widest italic text-center ${isDarkMode ? "border-white/20 text-white" : "border-black/10 text-gray-900"}`}
                                         >
                                             Sign In
                                         </button>
@@ -236,7 +236,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                                     <SignUpButton mode="modal">
                                         <button
                                             onClick={() => setIsMobileMenuOpen(false)}
-                                            className="w-full py-4 rounded-2xl bg-transparent border border-white/20 text-white font-black uppercase tracking-widest italic text-center mt-3"
+                                            className={`w-full py-4 rounded-2xl bg-transparent border font-black uppercase tracking-widest italic text-center mt-3 ${isDarkMode ? "border-white/20 text-white" : "border-black/10 text-gray-900"}`}
                                         >
                                             Sign Up
                                         </button>
@@ -244,7 +244,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                                     <Link
                                         href="/dashboard"
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-black uppercase tracking-widest italic text-center shadow-[0_15px_40px_rgba(212,255,74,0.3)] mt-3"
+                                        className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-black uppercase tracking-widest italic text-center shadow-[0_15px_40px_rgba(59,130,246,0.3)] mt-3"
                                     >
                                         Get Started
                                     </Link>
@@ -253,7 +253,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                                     <Link
                                         href="/dashboard"
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-black uppercase tracking-widest italic text-center shadow-[0_15px_40px_rgba(212,255,74,0.3)]"
+                                        className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-black uppercase tracking-widest italic text-center shadow-[0_15px_40px_rgba(59,130,246,0.3)]"
                                     >
                                         Open Dashboard
                                     </Link>

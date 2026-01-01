@@ -5,7 +5,7 @@ import React from "react";
 const Problem: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   return (
     <section
-      id="pricing"
+      id="problem"
       className={`relative py-40 px-6 overflow-hidden transition-colors duration-700 ${
         isDarkMode ? "bg-[#030303]" : "bg-[#fafafa]"
       }`}
@@ -36,7 +36,7 @@ const Problem: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
             </span>
           </div>
           <h2
-            className={`text-5xl md:text-7xl uppercase font-[1000] tracking-tighter leading-[0.9] ${
+            className={`text-5xl md:text-7xl uppercase font-black tracking-tighter leading-[0.9] ${
               isDarkMode ? "text-white" : "text-gray-950"
             }`}
           >
@@ -52,6 +52,13 @@ const Problem: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
               your data is a hassle.{" "}
             </span>
           </h2>
+          <p
+            className={`text-lg font-medium ${
+              isDarkMode ? "text-white/40" : "text-black/50"
+            } max-w-2xl mx-auto`}
+          >
+            Manual data entry is slow, error-prone, and expensive. Stop wasting time and start automating.
+          </p>
         </div>
 
         {/* Problems Grid */}
@@ -80,7 +87,7 @@ const Problem: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
             {
               icon: (
                 <svg
-                  className="w-6 h-6 text-amber-600"
+                  className="w-6 h-6 text-orange-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -118,16 +125,36 @@ const Problem: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
           ].map((item, i) => (
             <div
               key={i}
-              className="group relative rounded-2xl border border-gray-200 bg-gray-50/70 p-6 md:p-8 hover:bg-white hover:border-blue-500/30 hover:shadow-xl transition-all"
+              className={`group relative rounded-2xl border p-6 md:p-8 hover:shadow-xl transition-all ${
+                isDarkMode
+                  ? "border-white/10 bg-white/5 hover:bg-white/10 hover:border-blue-500/30"
+                  : "border-gray-200 bg-gray-50/70 hover:bg-white hover:border-blue-500/30"
+              }`}
             >
               <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-blue-600/5 to-violet-600/5" />
-              <div className="w-11 h-11 rounded-xl bg-white border border-gray-200 flex items-center justify-center mb-5 shadow-sm group-hover:border-blue-500/40">
+              <div
+                className={`w-11 h-11 rounded-xl border flex items-center justify-center mb-5 shadow-sm group-hover:border-blue-500/40 ${
+                  isDarkMode
+                    ? "bg-white/10 border-white/10"
+                    : "bg-white border-gray-200"
+                }`}
+              >
                 {item.icon}
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">
+              <h3
+                className={`text-xl font-bold mb-2 group-hover:text-blue-600 ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
                 {item.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+              <p
+                className={`leading-relaxed ${
+                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                {item.desc}
+              </p>
             </div>
           ))}
         </div>
