@@ -3,7 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Sun, Moon, Layers } from 'lucide-react';
 import Link from 'next/link';
-import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import LoginPopup from '@/components/auth/LoginPopup';
 
 interface NavbarProps {
     isDarkMode: boolean;
@@ -16,6 +17,8 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [activeTab, setActiveTab] = useState<string | null>(null);
+    const [isLoginOpen, setIsLoginOpen] = useState(false);
+    const [loginMode, setLoginMode] = useState<'login' | 'signup'>('login');
     const navItemsRef = useRef<(HTMLAnchorElement | null)[]>([]);
 
     const navItems = ['Features', 'Pricing', 'FAQ', 'About', 'Contact'];
@@ -153,22 +156,23 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                             </button>
 
                             <SignedOut>
-                                <SignInButton mode="modal">
-                                    <button className={`hidden sm:block relative px-4 py-2.5 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-transparent border ${isDarkMode ? "border-white/10 text-white hover:bg-white/5" : "border-black/[0.08] text-gray-900 hover:bg-black/5"}`}>
-                                        Sign In
-                                    </button>
-                                </SignInButton>
-                                <SignUpButton mode="modal">
-                                    <button className={`hidden sm:block relative px-4 py-2.5 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-transparent border ${isDarkMode ? "border-white/10 text-white hover:bg-white/5" : "border-black/[0.08] text-gray-900 hover:bg-black/5"}`}>
-                                        Sign Up
-                                    </button>
-                                </SignUpButton>
-                                <Link
-                                    href="/dashboard"
+                                <button
+                                    onClick={() => {
+                                        setLoginMode('login');
+                                        setIsLoginOpen(true);
+                                    }}
+                                    className={`hidden sm:block relative px-4 py-2.5 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-transparent border ${isDarkMode ? "border-white/10 text-white hover:bg-white/5" : "border-black/[0.08] text-gray-900 hover:bg-black/5"}`}>
+                                    Sign In
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setLoginMode('signup');
+                                        setIsLoginOpen(true);
+                                    }}
                                     className="hidden sm:block relative px-6 py-2.5 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-[0_8px_30px_rgba(59,130,246,0.3)] hover:scale-[1.05]"
                                 >
                                     Get Started
-                                </Link>
+                                </button>
                             </SignedOut>
                             <SignedIn>
                                 <Link
@@ -225,29 +229,26 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                                 ))}
                                 <div className="h-px bg-white/10 my-4" />
                                 <SignedOut>
-                                    <SignInButton mode="modal">
-                                        <button
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                            className={`w-full py-4 rounded-2xl bg-transparent border font-black uppercase tracking-widest italic text-center ${isDarkMode ? "border-white/20 text-white" : "border-black/10 text-gray-900"}`}
-                                        >
-                                            Sign In
-                                        </button>
-                                    </SignInButton>
-                                    <SignUpButton mode="modal">
-                                        <button
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                            className={`w-full py-4 rounded-2xl bg-transparent border font-black uppercase tracking-widest italic text-center mt-3 ${isDarkMode ? "border-white/20 text-white" : "border-black/10 text-gray-900"}`}
-                                        >
-                                            Sign Up
-                                        </button>
-                                    </SignUpButton>
-                                    <Link
-                                        href="/dashboard"
-                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    <button
+                                        onClick={() => {
+                                            setLoginMode('login');
+                                            setIsLoginOpen(true);
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                        className={`w-full py-4 rounded-2xl bg-transparent border font-black uppercase tracking-widest italic text-center ${isDarkMode ? "border-white/20 text-white" : "border-black/10 text-gray-900"}`}
+                                    >
+                                        Sign In
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setLoginMode('signup');
+                                            setIsLoginOpen(true);
+                                            setIsMobileMenuOpen(false);
+                                        }}
                                         className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-black uppercase tracking-widest italic text-center shadow-[0_15px_40px_rgba(59,130,246,0.3)] mt-3"
                                     >
                                         Get Started
-                                    </Link>
+                                    </button>
                                 </SignedOut>
                                 <SignedIn>
                                     <Link
@@ -267,7 +268,12 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                 </nav>
             </div>
 
-           
+            <LoginPopup
+                isOpen={isLoginOpen}
+                onClose={() => setIsLoginOpen(false)}
+                isDarkMode={isDarkMode}
+                initialMode={loginMode}
+            />
         </>
     );
 };
