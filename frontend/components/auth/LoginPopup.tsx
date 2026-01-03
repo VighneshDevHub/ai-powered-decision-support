@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Lock, Github, Apple, Chrome, ArrowRight, ShieldCheck, User } from 'lucide-react';
+import { X, Mail, Lock, Github, Linkedin, Chrome, ArrowRight, ShieldCheck, User, ExternalLink } from 'lucide-react';
 import { useSignIn, useSignUp } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
@@ -9,12 +9,13 @@ interface LoginPopupProps {
     isOpen: boolean;
     onClose: () => void;
     isDarkMode: boolean;
+    initialMode?: 'login' | 'signup';
 }
 
-const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) => {
+const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode, initialMode = 'login' }) => {
     const [focused, setFocused] = useState<string | null>(null);
     const [isAnimating, setIsAnimating] = useState(false);
-    const [mode, setMode] = useState<'login' | 'signup'>('login');
+    const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
@@ -38,12 +39,13 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
             setError('');
             setPendingVerification(false);
             setVerificationCode('');
+            setMode(initialMode);
         } else {
             const timer = setTimeout(() => setIsAnimating(false), 700);
             document.body.style.overflow = 'unset';
             return () => clearTimeout(timer);
         }
-    }, [isOpen]);
+    }, [isOpen, initialMode]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -130,7 +132,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
         }
     };
 
-    const handleOAuthSignIn = async (strategy: 'oauth_github' | 'oauth_google' | 'oauth_apple') => {
+    const handleOAuthSignIn = async (strategy: 'oauth_github' | 'oauth_google' | 'oauth_linkedin') => {
         if (!signIn) {
             setError('Authentication is not available. Please refresh the page.');
             return;
@@ -159,33 +161,33 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
 
             {/* Login Console */}
             <div className={`
-                relative w-full max-w-xl rounded-[3rem] border transition-all duration-700 overflow-hidden
+                relative w-full max-w-xl max-h-[90vh] overflow-y-auto no-scrollbar rounded-[3rem] border transition-all duration-700
                 ${isOpen ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-12 opacity-0'}
                 ${isDarkMode
                     ? 'bg-black/60 border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.8)]'
                     : 'bg-white border-black/5 shadow-[0_40px_100px_rgba(0,0,0,0.1)]'}
             `}>
                 {/* Internal Glow */}
-                <div className={`absolute -top-24 -left-24 w-64 h-64 blur-[100px] rounded-full opacity-20 pointer-events-none ${isDarkMode ? 'bg-[#d4ff4a]' : 'bg-[#d4ff4a]/50'}`} />
+                <div className={`absolute -top-24 -left-24 w-64 h-64 blur-[100px] rounded-full opacity-20 pointer-events-none ${isDarkMode ? 'bg-blue-500' : 'bg-blue-500/50'}`} />
 
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className={`absolute top-8 right-8 p-3 rounded-full border transition-all duration-500 hover:rotate-90 hover:scale-110 active:scale-95 z-50 ${isDarkMode ? 'bg-white/5 border-white/10 text-white/40 hover:text-[#d4ff4a]' : 'bg-black/5 border-black/5 text-black/40 hover:text-[#4d6106]'}`}
+                    className={`absolute top-8 right-8 p-3 rounded-full border transition-all duration-500 hover:rotate-90 hover:scale-110 active:scale-95 z-50 ${isDarkMode ? 'bg-white/5 border-white/10 text-white/40 hover:text-blue-400' : 'bg-black/5 border-black/5 text-black/40 hover:text-blue-600'}`}
                 >
                     <X className="w-5 h-5" />
                 </button>
 
-                <div className="p-10 lg:p-14 relative z-10">
+                <div className="p-8 lg:p-10 relative z-10">
                     {/* Header */}
-                    <div className="mb-12">
-                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border mb-6 ${isDarkMode ? 'bg-[#d4ff4a]/10 border-[#d4ff4a]/20' : 'bg-[#4d6106]/5 border-[#4d6106]/10'}`}>
-                            <ShieldCheck className={`w-3.5 h-3.5 ${isDarkMode ? 'text-[#d4ff4a]' : 'text-[#4d6106]'}`} />
-                            <span className={`text-[9px] font-black uppercase tracking-[0.3em] ${isDarkMode ? 'text-[#d4ff4a]' : 'text-[#4d6106]'}`}>Secure Access</span>
+                    <div className="mb-6">
+                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border mb-4 ${isDarkMode ? 'bg-blue-500/10 border-blue-500/20' : 'bg-blue-600/5 border-blue-600/10'}`}>
+                            <ShieldCheck className={`w-3.5 h-3.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                            <span className={`text-[9px] font-black uppercase tracking-[0.3em] ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>Secure Access</span>
                         </div>
-                        <h2 className={`text-5xl font-[1000] tracking-tighter leading-none mb-3 ${isDarkMode ? 'text-white' : 'text-gray-950'}`}>
+                        <h2 className={`text-4xl font-[1000] tracking-tighter leading-none mb-2 ${isDarkMode ? 'text-white' : 'text-gray-950'}`}>
                             {mode === 'login' ? 'ESTABLISH' : 'CREATE'} <br />
-                            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${isDarkMode ? 'from-[#d4ff4a] via-white to-[#d4ff4a]' : 'from-[#4d6106] via-[#8ab10b] to-[#4d6106]'} bg-[length:200%_auto] animate-shimmer`}>
+                            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${isDarkMode ? 'from-blue-400 via-white to-violet-400' : 'from-blue-600 via-blue-400 to-violet-600'} bg-[length:200%_auto] animate-shimmer`}>
                                 {mode === 'login' ? 'SESSION.' : 'ACCOUNT.'}
                             </span>
                         </h2>
@@ -195,7 +197,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                     </div>
 
                     {/* Mode Toggle */}
-                    <div className={`flex gap-2 p-1 rounded-2xl mb-8 ${isDarkMode ? 'bg-white/5' : 'bg-black/5'}`}>
+                    <div className={`flex gap-2 p-1 rounded-2xl mb-6 ${isDarkMode ? 'bg-white/5' : 'bg-black/5'}`}>
                         <button
                             onClick={() => {
                                 setMode('login');
@@ -203,7 +205,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                             }}
                             type="button"
                             className={`flex-1 py-3 px-6 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] transition-all duration-500 ${mode === 'login'
-                                ? (isDarkMode ? 'bg-[#d4ff4a] text-black shadow-lg' : 'bg-[#4d6106] text-white shadow-lg')
+                                ? (isDarkMode ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25' : 'bg-blue-600 text-white shadow-lg shadow-blue-500/25')
                                 : (isDarkMode ? 'text-white/40 hover:text-white/60' : 'text-black/40 hover:text-black/60')
                                 }`}
                         >
@@ -216,7 +218,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                             }}
                             type="button"
                             className={`flex-1 py-3 px-6 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] transition-all duration-500 ${mode === 'signup'
-                                ? (isDarkMode ? 'bg-[#d4ff4a] text-black shadow-lg' : 'bg-[#4d6106] text-white shadow-lg')
+                                ? (isDarkMode ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25' : 'bg-blue-600 text-white shadow-lg shadow-blue-500/25')
                                 : (isDarkMode ? 'text-white/40 hover:text-white/60' : 'text-black/40 hover:text-black/60')
                                 }`}
                         >
@@ -235,7 +237,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                     {pendingVerification ? (
                         <form className="space-y-8" onSubmit={handleVerifyEmail}>
                             <div className="text-center mb-6">
-                                <p className={`text-sm font-bold ${isDarkMode ? 'text-[#d4ff4a]' : 'text-[#4d6106]'}`}>
+                                <p className={`text-sm font-bold ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
                                     Please check your email for a verification code.
                                 </p>
                             </div>
@@ -243,7 +245,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                             <div className="space-y-1">
                                 <label className={`text-[10px] font-black uppercase tracking-[0.2em] opacity-40 ml-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Verification Code</label>
                                 <div className="relative group">
-                                    <ShieldCheck className={`absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors duration-500 ${focused === 'code' ? (isDarkMode ? 'text-[#d4ff4a]' : 'text-[#4d6106]') : (isDarkMode ? 'text-white/20' : 'text-black/20')}`} />
+                                    <ShieldCheck className={`absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors duration-500 ${focused === 'code' ? (isDarkMode ? 'text-blue-400' : 'text-blue-600') : (isDarkMode ? 'text-white/20' : 'text-black/20')}`} />
                                     <input
                                         type="text"
                                         value={verificationCode}
@@ -253,7 +255,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                                         placeholder="Enter 6-digit code"
                                         required
                                         maxLength={6}
-                                        className={`w-full bg-transparent border-b-2 pl-10 py-4 text-xl font-bold outline-none transition-all duration-500 ${focused === 'code' ? (isDarkMode ? 'border-[#d4ff4a] text-white' : 'border-[#4d6106] text-black') : (isDarkMode ? 'border-white/10 text-white/20' : 'border-black/5 text-black/20')}`}
+                                        className={`w-full bg-transparent border-b-2 pl-10 py-4 text-xl font-bold outline-none transition-all duration-500 ${focused === 'code' ? (isDarkMode ? 'border-blue-400 text-white' : 'border-blue-600 text-black') : (isDarkMode ? 'border-white/10 text-white/20' : 'border-black/5 text-black/20')}`}
                                     />
                                 </div>
                             </div>
@@ -264,7 +266,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                                 className={`
                                     group relative w-full flex items-center justify-center gap-4 py-6 rounded-2xl font-[1000] uppercase tracking-[0.3em] text-[11px] transition-all duration-500 overflow-hidden italic
                                     ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
-                                    ${isDarkMode ? 'bg-[#d4ff4a] text-black shadow-[0_20px_50px_rgba(212,255,74,0.3)] hover:shadow-[0_25px_60px_rgba(212,255,74,0.4)]' : 'bg-[#4d6106] text-white shadow-[0_20px_50px_rgba(77,97,6,0.2)] hover:shadow-[0_25px_60px_rgba(77,97,6,0.3)]'}
+                                    ${isDarkMode ? 'bg-blue-600 text-white shadow-[0_20px_50px_rgba(59,130,246,0.3)] hover:shadow-[0_25px_60px_rgba(59,130,246,0.4)]' : 'bg-blue-600 text-white shadow-[0_20px_50px_rgba(59,130,246,0.2)] hover:shadow-[0_25px_60px_rgba(59,130,246,0.3)]'}
                                 `}>
                                 <span className="relative z-10 flex items-center gap-3">
                                     {isLoading ? 'Verifying...' : 'Verify Email'} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -282,12 +284,15 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                         </form>
                     ) : (
                         /* Form */
-                        <form className="space-y-8" onSubmit={handleSubmit}>
+                        <form className="space-y-6" onSubmit={handleSubmit}>
+                            {/* Clerk CAPTCHA Container */}
+                            <div id="clerk-captcha" />
+                            
                             {mode === 'signup' && (
                                 <div className="space-y-1">
                                     <label className={`text-[10px] font-black uppercase tracking-[0.2em] opacity-40 ml-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Full Name</label>
                                     <div className="relative group">
-                                        <User className={`absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors duration-500 ${focused === 'name' ? (isDarkMode ? 'text-[#d4ff4a]' : 'text-[#4d6106]') : (isDarkMode ? 'text-white/20' : 'text-black/20')}`} />
+                                        <User className={`absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors duration-500 ${focused === 'name' ? (isDarkMode ? 'text-blue-400' : 'text-blue-600') : (isDarkMode ? 'text-white/20' : 'text-black/20')}`} />
                                         <input
                                             type="text"
                                             value={name}
@@ -296,7 +301,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                                             onBlur={() => setFocused(null)}
                                             placeholder="John Architect"
                                             required={mode === 'signup'}
-                                            className={`w-full bg-transparent border-b-2 pl-10 py-4 text-xl font-bold outline-none transition-all duration-500 ${focused === 'name' ? (isDarkMode ? 'border-[#d4ff4a] text-white' : 'border-[#4d6106] text-black') : (isDarkMode ? 'border-white/10 text-white/20' : 'border-black/5 text-black/20')}`}
+                                            className={`w-full bg-transparent border-b-2 pl-10 py-3 text-xl font-bold outline-none transition-all duration-500 ${focused === 'name' ? (isDarkMode ? 'border-blue-400 text-white' : 'border-blue-600 text-black') : (isDarkMode ? 'border-white/10 text-white/20' : 'border-black/5 text-black/20')}`}
                                         />
                                     </div>
                                 </div>
@@ -305,7 +310,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                             <div className="space-y-1">
                                 <label className={`text-[10px] font-black uppercase tracking-[0.2em] opacity-40 ml-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Email Address</label>
                                 <div className="relative group">
-                                    <Mail className={`absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors duration-500 ${focused === 'email' ? (isDarkMode ? 'text-[#d4ff4a]' : 'text-[#4d6106]') : (isDarkMode ? 'text-white/20' : 'text-black/20')}`} />
+                                    <Mail className={`absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors duration-500 ${focused === 'email' ? (isDarkMode ? 'text-blue-400' : 'text-blue-600') : (isDarkMode ? 'text-white/20' : 'text-black/20')}`} />
                                     <input
                                         type="email"
                                         value={email}
@@ -314,7 +319,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                                         onBlur={() => setFocused(null)}
                                         placeholder="you@example.com"
                                         required
-                                        className={`w-full bg-transparent border-b-2 pl-10 py-4 text-xl font-bold outline-none transition-all duration-500 ${focused === 'email' ? (isDarkMode ? 'border-[#d4ff4a] text-white' : 'border-[#4d6106] text-black') : (isDarkMode ? 'border-white/10 text-white/20' : 'border-black/5 text-black/20')}`}
+                                        className={`w-full bg-transparent border-b-2 pl-10 py-3 text-xl font-bold outline-none transition-all duration-500 ${focused === 'email' ? (isDarkMode ? 'border-blue-400 text-white' : 'border-blue-600 text-black') : (isDarkMode ? 'border-white/10 text-white/20' : 'border-black/5 text-black/20')}`}
                                     />
                                 </div>
                             </div>
@@ -322,7 +327,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                             <div className="space-y-1">
                                 <label className={`text-[10px] font-black uppercase tracking-[0.2em] opacity-40 ml-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Password</label>
                                 <div className="relative group">
-                                    <Lock className={`absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors duration-500 ${focused === 'password' ? (isDarkMode ? 'text-[#d4ff4a]' : 'text-[#4d6106]') : (isDarkMode ? 'text-white/20' : 'text-black/20')}`} />
+                                    <Lock className={`absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors duration-500 ${focused === 'password' ? (isDarkMode ? 'text-blue-400' : 'text-blue-600') : (isDarkMode ? 'text-white/20' : 'text-black/20')}`} />
                                     <input
                                         type="password"
                                         value={password}
@@ -332,7 +337,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                                         placeholder="••••••••"
                                         required
                                         minLength={8}
-                                        className={`w-full bg-transparent border-b-2 pl-10 py-4 text-xl font-bold outline-none transition-all duration-500 ${focused === 'password' ? (isDarkMode ? 'border-[#d4ff4a] text-white' : 'border-[#4d6106] text-black') : (isDarkMode ? 'border-white/10 text-white/20' : 'border-black/5 text-black/20')}`}
+                                        className={`w-full bg-transparent border-b-2 pl-10 py-3 text-xl font-bold outline-none transition-all duration-500 ${focused === 'password' ? (isDarkMode ? 'border-blue-400 text-white' : 'border-blue-600 text-black') : (isDarkMode ? 'border-white/10 text-white/20' : 'border-black/5 text-black/20')}`}
                                     />
                                 </div>
                             </div>
@@ -341,9 +346,9 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                                 type="submit"
                                 disabled={isLoading}
                                 className={`
-                            group relative w-full flex items-center justify-center gap-4 py-6 rounded-2xl font-[1000] uppercase tracking-[0.3em] text-[11px] transition-all duration-500 overflow-hidden italic mb-8
+                            group relative w-full flex items-center justify-center gap-4 py-4 rounded-2xl font-[1000] uppercase tracking-[0.3em] text-[11px] transition-all duration-500 overflow-hidden italic mb-8
                             ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
-                            ${isDarkMode ? 'bg-[#d4ff4a] text-black shadow-[0_20px_50px_rgba(212,255,74,0.3)] hover:shadow-[0_25px_60px_rgba(212,255,74,0.4)]' : 'bg-[#4d6106] text-white shadow-[0_20px_50px_rgba(77,97,6,0.2)] hover:shadow-[0_25px_60px_rgba(77,97,6,0.3)]'}
+                            ${isDarkMode ? 'bg-blue-600 text-white shadow-[0_20px_50px_rgba(59,130,246,0.3)] hover:shadow-[0_25px_60px_rgba(59,130,246,0.4)]' : 'bg-blue-600 text-white shadow-[0_20px_50px_rgba(59,130,246,0.2)] hover:shadow-[0_25px_60px_rgba(59,130,246,0.3)]'}
                         `}>
                                 <span className="relative z-10 flex items-center gap-3">
                                     {isLoading ? 'Processing...' : (mode === 'login' ? 'Sign In' : 'Create Account')} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -352,29 +357,36 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                             </button>
 
                             {/* Social Login */}
-                            <div className="space-y-6 pt-4 border-t border-white/5">
-                                <p className={`text-center text-[9px] font-black uppercase tracking-[0.3em] opacity-20 ${isDarkMode ? 'text-white' : 'text-black'}`}>External Nodes</p>
+                            <div className="space-y-4 pt-4 border-t border-white/5">
+                                <div className="flex items-center justify-between">
+                                    <p className={`text-[9px] font-black uppercase tracking-[0.3em] opacity-20 ${isDarkMode ? 'text-white' : 'text-black'}`}>External Nodes</p>
+                                    <div className="flex gap-2">
+                                         <a href="#" className={`text-[9px] font-bold uppercase tracking-[0.1em] opacity-40 hover:opacity-100 transition-opacity ${isDarkMode ? 'text-white' : 'text-black'}`}>Help</a>
+                                         <span className={`opacity-20 ${isDarkMode ? 'text-white' : 'text-black'}`}>|</span>
+                                         <a href="#" className={`text-[9px] font-bold uppercase tracking-[0.1em] opacity-40 hover:opacity-100 transition-opacity ${isDarkMode ? 'text-white' : 'text-black'}`}>Privacy</a>
+                                    </div>
+                                </div>
                                 <div className="grid grid-cols-3 gap-4">
                                     <button
                                         type="button"
                                         onClick={() => handleOAuthSignIn('oauth_github')}
-                                        className={`flex flex-col items-center justify-center gap-2 py-4 rounded-xl border transition-all duration-500 font-bold text-[9px] uppercase tracking-[0.2em] ${isDarkMode ? 'bg-white/5 border-white/10 text-white/60 hover:border-[#d4ff4a] hover:text-[#d4ff4a]' : 'bg-black/5 border-black/5 text-black/60 hover:border-[#4d6106] hover:text-[#4d6106]'}`}
+                                        className={`flex flex-col items-center justify-center gap-2 py-4 rounded-xl border transition-all duration-500 font-bold text-[9px] uppercase tracking-[0.2em] ${isDarkMode ? 'bg-white/5 border-white/10 text-white/60 hover:border-blue-500 hover:text-blue-500' : 'bg-black/5 border-black/5 text-black/60 hover:border-blue-600 hover:text-blue-600'}`}
                                     >
                                         <Github className="w-4 h-4" /> Github
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => handleOAuthSignIn('oauth_google')}
-                                        className={`flex flex-col items-center justify-center gap-2 py-4 rounded-xl border transition-all duration-500 font-bold text-[9px] uppercase tracking-[0.2em] ${isDarkMode ? 'bg-white/5 border-white/10 text-white/60 hover:border-[#d4ff4a] hover:text-[#d4ff4a]' : 'bg-black/5 border-black/5 text-black/60 hover:border-[#4d6106] hover:text-[#4d6106]'}`}
+                                        className={`flex flex-col items-center justify-center gap-2 py-4 rounded-xl border transition-all duration-500 font-bold text-[9px] uppercase tracking-[0.2em] ${isDarkMode ? 'bg-white/5 border-white/10 text-white/60 hover:border-blue-500 hover:text-blue-500' : 'bg-black/5 border-black/5 text-black/60 hover:border-blue-600 hover:text-blue-600'}`}
                                     >
                                         <Chrome className="w-4 h-4" /> Google
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => handleOAuthSignIn('oauth_apple')}
-                                        className={`flex flex-col items-center justify-center gap-2 py-4 rounded-xl border transition-all duration-500 font-bold text-[9px] uppercase tracking-[0.2em] ${isDarkMode ? 'bg-white/5 border-white/10 text-white/60 hover:border-[#d4ff4a] hover:text-[#d4ff4a]' : 'bg-black/5 border-black/5 text-black/60 hover:border-[#4d6106] hover:text-[#4d6106]'}`}
+                                        onClick={() => handleOAuthSignIn('oauth_linkedin')}
+                                        className={`flex flex-col items-center justify-center gap-2 py-4 rounded-xl border transition-all duration-500 font-bold text-[9px] uppercase tracking-[0.2em] ${isDarkMode ? 'bg-white/5 border-white/10 text-white/60 hover:border-blue-500 hover:text-blue-500' : 'bg-black/5 border-black/5 text-black/60 hover:border-blue-600 hover:text-blue-600'}`}
                                     >
-                                        <Apple className="w-4 h-4" /> Apple
+                                        <Linkedin className="w-4 h-4" /> LinkedIn
                                     </button>
                                 </div>
                             </div>
@@ -389,6 +401,13 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose, isDarkMode }) 
                     100% { background-position: -100% 50%; }
                 }
                 .animate-shimmer { animation: shimmer 5s ease-in-out infinite; }
+                .no-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .no-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
             `}</style>
         </div>
     );
