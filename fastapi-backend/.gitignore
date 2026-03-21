@@ -1,8 +1,29 @@
-venv/
+# Python
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.Python
+
+# Environments
 .env
-storage/
-*.log
+.venv
+env/
+venv/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Credentials
+credentials.json
+
+# Project specific
+storage/
