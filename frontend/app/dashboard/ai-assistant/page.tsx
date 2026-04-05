@@ -32,6 +32,8 @@ import {
   Database,
   ShieldCheck
 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -287,8 +289,23 @@ export default function AIAssistantPage() {
                             ? 'bg-card/80 text-foreground border-border/60' 
                             : 'bg-primary text-white font-medium border-none'
                         }`}>
-                        <div className="text-sm leading-relaxed whitespace-pre-wrap">
-                            {msg.content}
+                        <div className="text-sm leading-relaxed max-w-none">
+                            {msg.role === 'assistant' ? (
+                                <ReactMarkdown 
+                                     remarkPlugins={[remarkGfm]}
+                                     components={{
+                                        p: ({children}) => <p className="mb-4 last:mb-0">{children}</p>,
+                                        strong: ({children}) => <strong className="font-bold text-primary">{children}</strong>,
+                                        ul: ({children}) => <ul className="list-disc ml-6 mb-4 space-y-1">{children}</ul>,
+                                        ol: ({children}) => <ol className="list-decimal ml-6 mb-4 space-y-1">{children}</ol>,
+                                        li: ({children}) => <li className="mb-1">{children}</li>,
+                                    }}
+                                >
+                                    {msg.content}
+                                </ReactMarkdown>
+                            ) : (
+                                <div className="whitespace-pre-wrap">{msg.content}</div>
+                            )}
                         </div>
                         </div>
                     </div>
