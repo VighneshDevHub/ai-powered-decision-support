@@ -1,5 +1,6 @@
 # 🧠 Intellexa.ai - AI-Powered Decision Support System
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Render-009688?style=for-the-badge&logo=render)](https://ai-powered-decision-support.onrender.com)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-1.0-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
