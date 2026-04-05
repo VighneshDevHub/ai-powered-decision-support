@@ -26,4 +26,10 @@ Thumbs.db
 credentials.json
 
 # Project specific
-storage/
+/storage/
+# Keep engine/storage/ code
+!engine/storage/
+# Ignore subdirectories in engine/storage if they contain temporary data
+# !engine/storage/*.py
+# !engine/storage/__init__.py
+
