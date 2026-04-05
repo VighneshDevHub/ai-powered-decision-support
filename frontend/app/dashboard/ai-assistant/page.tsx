@@ -222,17 +222,15 @@ export default function AIAssistantPage() {
             <div className="flex gap-2">
                 <Button 
                     variant="outline" 
-                    size="icon" 
                     onClick={() => setIsFullScreen(!isFullScreen)}
-                    className="h-12 w-12 rounded-2xl border-border/50 hover:bg-muted transition-all shadow-sm"
+                    className="h-12 w-12 rounded-2xl border-border/50 hover:bg-muted transition-all shadow-sm flex items-center justify-center"
                 >
                     {isFullScreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
                 </Button>
                 <Button 
                     variant="outline" 
-                    size="icon" 
                     onClick={clearChat} 
-                    className="h-12 w-12 rounded-2xl hover:bg-destructive/10 hover:text-destructive border-border/50 transition-all shadow-sm"
+                    className="h-12 w-12 rounded-2xl hover:bg-destructive/10 hover:text-destructive border-border/50 transition-all shadow-sm flex items-center justify-center"
                 >
                     <Trash2 size={20} />
                 </Button>
