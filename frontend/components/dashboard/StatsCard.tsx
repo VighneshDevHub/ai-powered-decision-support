@@ -1,51 +1,76 @@
+'use client';
+
 import React from 'react';
 import { Card } from '../ui/Card';
+import { ArrowUpRight, ArrowDownRight, TrendingUp } from 'lucide-react';
 
 interface StatsCardProps {
   title: string;
-  value: string;
+  value: string | number;
   trend: string;
   trendUp?: boolean;
   description?: string;
   icon?: React.ReactNode;
   delay?: number;
+  color?: 'blue' | 'indigo' | 'emerald' | 'amber' | 'rose' | 'primary';
 }
 
-export const StatsCard = ({ title, value, trend, trendUp, description, icon, delay = 0 }: StatsCardProps) => {
+export const StatsCard = ({ 
+  title, 
+  value, 
+  trend, 
+  trendUp, 
+  description, 
+  icon, 
+  delay = 0,
+  color = 'primary'
+}: StatsCardProps) => {
+  const colorMap = {
+    primary: 'text-primary bg-primary/10 border-primary/20',
+    blue: 'text-blue-600 bg-blue-500/10 border-blue-500/20',
+    indigo: 'text-indigo-600 bg-indigo-500/10 border-indigo-500/20',
+    emerald: 'text-emerald-600 bg-emerald-500/10 border-emerald-500/20',
+    amber: 'text-amber-600 bg-amber-500/10 border-amber-500/20',
+    rose: 'text-rose-600 bg-rose-500/10 border-rose-500/20',
+  };
+
+  const selectedColor = colorMap[color] || colorMap.primary;
+
   return (
     <Card 
-      className="flex flex-col gap-3 hover:border-blue-300 transition-all duration-300 hover:shadow-md animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards"
+      className="p-8 border-border/40 card-hover group relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 fill-mode-backwards rounded-3xl bg-card shadow-xl"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-500 font-medium">{title}</span>
-        {icon && <div className="text-gray-400">{icon}</div>}
-      </div>
-      <div className="flex items-end justify-between">
-        <div className="flex flex-col">
-            <span className="text-3xl font-bold text-gray-900 tracking-tight">{value}</span>
-            {description && <span className="text-xs text-gray-400 mt-1">{description}</span>}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
+      
+      <div className="flex justify-between items-start mb-6 relative z-10">
+        <div className={`p-3.5 rounded-2xl ${selectedColor} shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
+          {icon || <TrendingUp size={22} />}
         </div>
         
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 ${
-          trendUp === true
-            ? 'bg-green-50 text-green-700 border border-green-100' 
-            : trendUp === false
-              ? 'bg-red-50 text-red-700 border border-red-100'
-              : 'bg-gray-100 text-gray-600'
-        }`}>
-          {trendUp === true && (
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-          )}
-          {trendUp === false && (
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-            </svg>
-          )}
-          {trend}
-        </span>
+        {trend && (
+          <div className={`flex items-center gap-1 text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest ${
+            trendUp === true
+              ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20' 
+              : trendUp === false
+                ? 'bg-rose-500/10 text-rose-600 border border-rose-500/20'
+                : 'bg-muted text-muted-foreground border border-border/50'
+          }`}>
+            {trendUp === true && <ArrowUpRight size={12} />}
+            {trendUp === false && <ArrowDownRight size={12} />}
+            {trend}
+          </div>
+        )}
+      </div>
+
+      <div className="space-y-1 relative z-10">
+        <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">{title}</h3>
+        <div className="flex items-baseline gap-2">
+            <p className="text-4xl font-black text-foreground tracking-tighter">{value}</p>
+            {description && (
+                <span className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">{description}</span>
+            )}
+        </div>
       </div>
     </Card>
   );

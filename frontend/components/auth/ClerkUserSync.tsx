@@ -14,7 +14,7 @@ export default function ClerkUserSync() {
 
                 if (!isSynced) {
                     try {
-                        const response = await fetch('/api/py/users', {
+                        const response = await fetch('/api/users', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

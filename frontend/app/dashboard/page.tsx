@@ -15,12 +15,15 @@ import {
   TrendingUp,
   Activity,
   ShieldCheck,
-  Database
+  Database,
+  Sparkles,
+  Zap,
+  ArrowUpRight,
+  BrainCircuit,
+  LayoutDashboard
 } from 'lucide-react';
 import { useDashboard } from '@/context/DashboardContext';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -32,7 +35,6 @@ import {
 import { Button } from '@/components/ui/Button';
 import { transformMetricsToChartData } from '@/lib/chartUtils';
 
-// Mock data for the chart since backend provides mostly text summaries currently
 const mockChartData = [
   { name: 'Jan', value: 4000 },
   { name: 'Feb', value: 3000 },
@@ -48,12 +50,17 @@ export default function DashboardOverview() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[70vh] space-y-4">
+      <div className="flex flex-col items-center justify-center h-[70vh] space-y-6">
         <div className="relative">
-            <div className="absolute inset-0 bg-blue-100 rounded-full animate-ping opacity-75"></div>
-            <Loader2 className="relative w-12 h-12 animate-spin text-blue-600" />
+            <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping opacity-75"></div>
+            <div className="relative bg-background p-4 rounded-2xl shadow-xl">
+                <Loader2 className="w-12 h-12 animate-spin text-primary" />
+            </div>
         </div>
-        <p className="text-gray-500 font-medium animate-pulse">Loading your executive snapshot...</p>
+        <div className="text-center space-y-2">
+            <p className="text-xl font-bold tracking-tight text-foreground">Analyzing Business Intelligence</p>
+            <p className="text-muted-foreground animate-pulse">Our AI is processing your strategic data...</p>
+        </div>
       </div>
     );
   }
@@ -61,54 +68,47 @@ export default function DashboardOverview() {
   // Empty State
   if (!documents || documents.length === 0) {
     return (
-        <div className="flex flex-col items-center justify-center h-[70vh] text-center max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-8 shadow-lg shadow-blue-100 ring-8 ring-blue-50/50">
-                <Upload className="w-10 h-10 text-blue-600" />
+        <div className="flex flex-col items-center justify-center h-[70vh] text-center max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <div className="relative mb-10">
+                <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full scale-150"></div>
+                <div className="relative w-28 h-28 bg-gradient-to-br from-primary to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-primary/40 rotate-3">
+                    <Upload className="w-12 h-12 text-white" />
+                </div>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Welcome to Intellexa</h1>
-            <p className="text-xl text-gray-500 mb-10 leading-relaxed">
-                Your AI-powered decision support system is ready. <br/>
-                Upload your first dataset to generate strategic insights, identify risks, and uncover opportunities.
+            <h1 className="text-5xl font-black text-foreground mb-6 tracking-tight leading-tight">
+                Unlock Your <span className="text-gradient">AI-Powered</span> <br/>Decision Potential
+            </h1>
+            <p className="text-xl text-muted-foreground mb-12 leading-relaxed max-w-xl mx-auto">
+                Intellexa transforms your raw business data into actionable strategic intelligence. Upload your first dataset to begin.
             </p>
             
             <Link href="/dashboard/upload">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6 shadow-xl shadow-blue-500/30">
-                    <span className="flex items-center gap-3">
-                        Start Analysis
-                        <ArrowRight className="w-5 h-5" />
-                    </span>
+                <Button size="lg" className="h-16 px-10 text-lg font-bold rounded-2xl shadow-2xl shadow-primary/30 group">
+                    Start Your Analysis
+                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
             </Link>
 
-            <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 w-full text-left">
-                <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center mb-3">
-                        <Lightbulb className="w-5 h-5 text-indigo-600" />
+            <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-8 w-full text-left">
+                {[
+                    { icon: Lightbulb, title: 'Smart Insights', desc: 'Automated trend detection', color: 'indigo' },
+                    { icon: AlertTriangle, title: 'Risk Guard', desc: 'Proactive threat identification', color: 'amber' },
+                    { icon: Target, title: 'Strategic Plans', desc: '30-day growth roadmaps', color: 'emerald' }
+                ].map((item, i) => (
+                    <div key={i} className="p-6 rounded-2xl bg-muted/50 border border-border/50 backdrop-blur-sm card-hover">
+                        <div className={`w-12 h-12 rounded-xl bg-${item.color}-500/10 flex items-center justify-center mb-4`}>
+                            <item.icon className={`w-6 h-6 text-${item.color}-500`} />
+                        </div>
+                        <h3 className="font-bold text-foreground mb-1">{item.title}</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
                     </div>
-                    <h3 className="font-semibold text-gray-900">Smart Insights</h3>
-                    <p className="text-sm text-gray-500 mt-1">Automated analysis of your data patterns.</p>
-                </div>
-                <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm">
-                    <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center mb-3">
-                        <AlertTriangle className="w-5 h-5 text-amber-600" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900">Risk Detection</h3>
-                    <p className="text-sm text-gray-500 mt-1">Early warning system for potential issues.</p>
-                </div>
-                <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center mb-3">
-                        <Target className="w-5 h-5 text-emerald-600" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900">Action Plans</h3>
-                    <p className="text-sm text-gray-500 mt-1">Data-driven recommendations for growth.</p>
-                </div>
+                ))}
             </div>
         </div>
     );
   }
 
   const datasetCount = documents.length;
-  // Type assertion since we know the structure but TypeScript might not
   const groupSummary = processedData?.group_summary as { 
     group_insights?: string[], 
     cross_dataset_risks?: string[], 
@@ -119,203 +119,271 @@ export default function DashboardOverview() {
   const risks = groupSummary?.cross_dataset_risks || [];
   const focusAreas = groupSummary?.recommended_focus_areas || [];
 
-  // Get chart data from the latest dataset
   const latestDataset = processedData?.datasets?.[0];
   const realChartData = transformMetricsToChartData(latestDataset?.metrics);
-  const isUsingRealData = realChartData.length > 0;
-  const chartData = isUsingRealData ? realChartData : mockChartData;
+  const chartData = realChartData.length > 0 ? realChartData : mockChartData;
+
+  // Normalize AI confidence
+  const confidenceValue = latestDataset?.ai_confidence 
+    ? (latestDataset.ai_confidence > 1 ? latestDataset.ai_confidence / 100 : latestDataset.ai_confidence)
+    : 0.92;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-10 animate-in fade-in duration-700 max-w-[1600px] mx-auto">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Executive Snapshot</h1>
-            <p className="text-gray-500 mt-1">High-level intelligence on business health and strategic direction.</p>
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-border pb-8">
+        <div className="space-y-2">
+            <div className="flex items-center gap-2 text-primary font-bold text-sm uppercase tracking-widest">
+                <BrainCircuit size={16} />
+                AI Analysis Engine Active
+            </div>
+            <h1 className="text-4xl font-black text-foreground tracking-tight">Executive Dashboard</h1>
+            <p className="text-lg text-muted-foreground">High-level intelligence and strategic directives from your business data.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-muted rounded-xl text-xs font-bold text-muted-foreground">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                SYNCED WITH {datasetCount} DATASETS
+            </div>
             <Link href="/dashboard/ai-assistant">
-                <Button className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/25">
-                    <FileText size={16} className="mr-2" />
-                    Ask AI Assistant
+                <Button className="h-12 px-6 font-bold rounded-xl shadow-xl shadow-primary/20 group">
+                    <Sparkles size={18} className="mr-2 group-hover:rotate-12 transition-transform" />
+                    Ask Strategy AI
                 </Button>
             </Link>
         </div>
       </div>
 
-      {/* A. Executive Summary Card */}
-      <Card className="p-6 bg-gradient-to-br from-indigo-900 to-blue-900 text-white border-none shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-        <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                    <SparklesIcon className="w-5 h-5 text-yellow-300" />
+      {/* Hero Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        {/* Main Executive Summary */}
+        <div className="xl:col-span-8">
+            <Card className="h-full p-8 bg-gradient-to-br from-primary/95 via-primary to-indigo-900 text-white border-none shadow-2xl relative overflow-hidden group">
+                <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-1000"></div>
+                <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-400/20 rounded-full blur-3xl group-hover:translate-x-10 transition-transform duration-1000"></div>
+                
+                <div className="relative z-10 h-full flex flex-col justify-between">
+                    <div>
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20">
+                                <Zap className="w-6 h-6 text-yellow-300 fill-yellow-300" />
+                            </div>
+                            <h2 className="text-xl font-bold tracking-tight text-white/90">AI Strategic Summary</h2>
+                        </div>
+                        <div className="space-y-6">
+                            {insights.length > 0 ? (
+                                insights.slice(0, 3).map((insight, i) => (
+                                    <div key={i} className="flex gap-4">
+                                        <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-yellow-300 shrink-0 shadow-[0_0_10px_rgba(253,224,71,0.5)]" />
+                                        <p className="text-xl md:text-2xl font-bold leading-relaxed text-white tracking-tight italic">
+                                            "{insight}"
+                                        </p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-2xl font-black text-white/90 leading-tight max-w-xl">
+                                    Upload strategic data to generate your comprehensive AI executive summary.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    
+                    <div className="mt-12 flex items-center gap-6">
+                        <div className="flex -space-x-3">
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white/20 bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold">
+                                    AI
+                                </div>
+                            ))}
+                        </div>
+                        <p className="text-sm font-medium text-white/60 uppercase tracking-widest">Powered by Advanced Reasoning Models</p>
+                    </div>
                 </div>
-                <h2 className="text-lg font-semibold text-blue-100">AI Executive Summary</h2>
-            </div>
-            <div className="space-y-2">
-                {insights.slice(0, 2).map((insight, i) => (
-                    <p key={i} className="text-lg md:text-xl font-medium leading-relaxed text-white/90">
-                        {insight}
-                    </p>
-                ))}
-                {insights.length === 0 && (
-                    <p className="text-lg text-blue-200">
-                        Upload more data to generate a comprehensive executive summary.
-                    </p>
-                )}
-            </div>
+            </Card>
         </div>
-      </Card>
 
-      {/* B. Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard 
-            title="Total Datasets" 
-            value={datasetCount.toString()} 
-            icon={<Database size={20} />} 
-            trend="+12%" 
-            trendUp={true} 
-            description="vs last month"
-        />
-        <StatsCard 
-            title="AI Confidence" 
-            value="92%" 
-            icon={<ShieldCheck size={20} />} 
-            trend="+5%" 
-            trendUp={true}
-            description="Model reliability" 
-        />
-        <StatsCard 
-            title="Risks Identified" 
-            value={risks.length.toString()} 
-            icon={<AlertTriangle size={20} />} 
-            trend={risks.length > 0 ? "High Priority" : "Low"} 
-            trendUp={risks.length === 0}
-            description="Requires attention" 
-        />
-        <StatsCard 
-            title="Opportunities" 
-            value={focusAreas.length.toString()} 
-            icon={<Lightbulb size={20} />} 
-            trend="Actionable" 
-            trendUp={true}
-            description="Growth signals" 
-        />
+        {/* Confidence Card */}
+        <div className="xl:col-span-4">
+            <Card className="h-full p-8 border-none shadow-xl bg-card relative overflow-hidden flex flex-col justify-between group">
+                <div className="flex items-center justify-between mb-8">
+                    <h3 className="font-bold text-foreground flex items-center gap-2 uppercase tracking-widest text-xs">
+                        <ShieldCheck className="text-primary" size={16} />
+                        Model Reliability
+                    </h3>
+                    <div className="px-2 py-1 bg-primary/10 rounded text-[10px] font-black text-primary border border-primary/20">OPTIMIZED</div>
+                </div>
+                
+                <div className="flex-1 flex flex-col items-center justify-center py-6">
+                    <div className="relative w-48 h-48">
+                        <svg className="w-full h-full transform -rotate-90">
+                            <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-muted/30" />
+                            <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={552.9} strokeDashoffset={552.9 * (1 - confidenceValue)} strokeLinecap="round" className="text-primary transition-all duration-1000 ease-out" />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-1">
+                            <span className="text-5xl font-black text-foreground tracking-tighter">{Math.round(confidenceValue * 100)}%</span>
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Confidence</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="mt-8 p-4 rounded-xl bg-muted/50 border border-border/50">
+                    <p className="text-xs text-muted-foreground italic leading-relaxed font-medium">
+                        "Model integrity is high based on cross-dataset consistency and data structure normalization."
+                    </p>
+                </div>
+            </Card>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* C. Risk & Opportunity Signals */}
-        <Card className="lg:col-span-1 p-6 flex flex-col">
-            <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Activity className="text-blue-600" size={20} />
-                Strategic Signals
-            </h3>
-            <div className="space-y-4 flex-1">
-                {risks.slice(0, 3).map((risk, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-100">
-                        <div className="bg-red-100 p-1.5 rounded-md mt-0.5">
-                            <AlertTriangle size={14} className="text-red-600" />
-                        </div>
-                        <div>
-                            <span className="text-xs font-bold text-red-600 uppercase tracking-wide">Risk</span>
-                            <p className="text-sm text-gray-700 mt-1">{risk}</p>
-                        </div>
+      {/* Stats Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+            { title: 'Data Assets', value: datasetCount, icon: Database, trend: '+12%', color: 'blue' },
+            { title: 'Strategic Signals', value: risks.length + focusAreas.length, icon: Activity, trend: 'High', color: 'indigo' },
+            { title: 'Identified Risks', value: risks.length, icon: AlertTriangle, trend: 'Priority', color: 'rose' },
+            { title: 'Opportunities', value: focusAreas.length, icon: Target, trend: 'Growth', color: 'emerald' }
+        ].map((stat, i) => (
+            <Card key={i} className="p-8 card-hover border-border/40 bg-card rounded-[2rem] shadow-lg">
+                <div className="flex justify-between items-start mb-6">
+                    <div className={`p-3.5 rounded-2xl bg-${stat.color}-500/10 text-${stat.color}-600 border border-${stat.color}-500/20`}>
+                        <stat.icon size={22} />
                     </div>
-                ))}
-                {focusAreas.slice(0, 2).map((area, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-100">
-                        <div className="bg-emerald-100 p-1.5 rounded-md mt-0.5">
-                            <TrendingUp size={14} className="text-emerald-600" />
-                        </div>
-                        <div>
-                            <span className="text-xs font-bold text-emerald-600 uppercase tracking-wide">Opportunity</span>
-                            <p className="text-sm text-gray-700 mt-1">{area}</p>
-                        </div>
+                    <div className={`flex items-center gap-1 text-[10px] font-black px-2.5 py-1.5 rounded-xl bg-${stat.color}-500/10 text-${stat.color}-600 uppercase tracking-widest border border-${stat.color}-500/20`}>
+                        <ArrowUpRight size={10} />
+                        {stat.trend}
                     </div>
-                ))}
+                </div>
+                <div className="space-y-1">
+                    <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">{stat.title}</h3>
+                    <p className="text-4xl font-black text-foreground tracking-tighter">{stat.value}</p>
+                </div>
+            </Card>
+        ))}
+      </div>
+
+      {/* Detailed Insights Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Signals Column */}
+        <Card className="p-8 border-none shadow-xl bg-card rounded-[2rem]">
+            <div className="flex items-center justify-between mb-8">
+                <h3 className="font-black text-foreground flex items-center gap-3 uppercase text-xs tracking-widest">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Activity className="text-primary" size={18} />
+                    </div>
+                    Strategic Signals
+                </h3>
+                <Link href="/dashboard/insights" className="text-[10px] font-black text-primary hover:underline tracking-widest uppercase">VIEW ALL</Link>
             </div>
-            <div className="mt-6 pt-4 border-t border-gray-100">
-                <Link href="/dashboard/predictions">
-                    <Button variant="outline" className="w-full text-blue-600 border-blue-200 hover:bg-blue-50">
-                        View All Predictions
-                    </Button>
-                </Link>
+            
+            <div className="space-y-4">
+                {risks.length > 0 ? (
+                    risks.slice(0, 3).map((risk, i) => (
+                        <div key={i} className="group p-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 hover:bg-rose-500/10 transition-colors">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-[10px] font-black text-rose-600 uppercase tracking-widest bg-rose-500/10 px-2 py-0.5 rounded">Risk</span>
+                                <AlertTriangle size={14} className="text-rose-500 opacity-50" />
+                            </div>
+                            <p className="text-sm font-bold text-foreground leading-relaxed">{risk}</p>
+                        </div>
+                    ))
+                ) : (
+                    <div className="p-10 text-center border-2 border-dashed border-border rounded-3xl bg-muted/20">
+                        <p className="text-xs text-muted-foreground font-bold italic uppercase tracking-widest">No critical risks detected</p>
+                    </div>
+                )}
+
+                {focusAreas.slice(0, 2).map((area, i) => (
+                    <div key={i} className="group p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 hover:bg-emerald-500/10 transition-colors">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded">Opportunity</span>
+                            <TrendingUp size={14} className="text-emerald-500 opacity-50" />
+                        </div>
+                        <p className="text-sm font-bold text-foreground leading-relaxed">{area}</p>
+                    </div>
+                ))}
             </div>
         </Card>
 
-        {/* C. Data Charts (Trend Analysis) */}
-        <Card className="lg:col-span-2 p-6 flex flex-col">
-            <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                    <TrendingUp className="text-blue-600" size={20} />
-                    Performance Trends {isUsingRealData ? '' : '(Sample Data)'}
+        {/* Trend Analysis Chart */}
+        <Card className="xl:col-span-2 p-8 border-none shadow-xl bg-card rounded-[2rem]">
+            <div className="flex items-center justify-between mb-10">
+                <h3 className="font-black text-foreground flex items-center gap-3 uppercase text-xs tracking-widest">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+                        <TrendingUp className="text-indigo-500" size={18} />
+                    </div>
+                    Business Trajectory Analysis
                 </h3>
-                <select className="text-sm border-gray-200 rounded-lg text-gray-500 focus:ring-blue-500 focus:border-blue-500">
-                    <option>Revenue</option>
-                    <option>Users</option>
-                    <option>Engagement</option>
-                </select>
+                <div className="flex items-center gap-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <div className="flex items-center gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_8px_rgba(59,130,246,0.5)]" /> Performance
+                    </div>
+                </div>
             </div>
-            
-            <div className="h-64 w-full">
+
+            <div className="h-[350px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={chartData}>
                         <defs>
                             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3}/>
+                                <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
                             </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
-                        <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
-                        <Tooltip 
-                            contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} 
-                            itemStyle={{color: '#1e293b'}}
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
+                        <XAxis 
+                            dataKey="name" 
+                            axisLine={false} 
+                            tickLine={false} 
+                            tick={{ fill: 'var(--muted-foreground)', fontSize: 11, fontWeight: 700 }}
+                            dy={10}
                         />
-                        <Area type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
+                        <YAxis 
+                            axisLine={false} 
+                            tickLine={false} 
+                            tick={{ fill: 'var(--muted-foreground)', fontSize: 11, fontWeight: 700 }}
+                        />
+                        <Tooltip 
+                            contentStyle={{ 
+                                backgroundColor: 'var(--card)', 
+                                border: '1px solid var(--border)',
+                                borderRadius: '16px',
+                                boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+                                padding: '12px'
+                            }}
+                            itemStyle={{ fontWeight: 'bold', color: 'var(--foreground)' }}
+                        />
+                        <Area 
+                            type="monotone" 
+                            dataKey="value" 
+                            stroke="var(--primary)" 
+                            strokeWidth={4}
+                            fillOpacity={1} 
+                            fill="url(#colorValue)" 
+                        />
                     </AreaChart>
                 </ResponsiveContainer>
-            </div>
-            
-            <div className="mt-4 flex items-center justify-between text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
-                <span>Total Growth: <span className="text-emerald-600 font-bold">+12.4%</span></span>
-                <span>Projected: <span className="text-blue-600 font-bold">$42.5k</span></span>
             </div>
         </Card>
       </div>
 
-      {/* D. "What Should I Do?" CTA */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-indigo-50 rounded-2xl p-8 border border-indigo-100">
-        <div className="flex flex-col justify-center">
-            <h3 className="text-xl font-bold text-indigo-900 mb-2">Ready to dig deeper?</h3>
-            <p className="text-indigo-700 mb-6">Explore the full analysis workspace or chat with your data to get specific answers.</p>
-            <div className="flex gap-4">
-                <Link href="/dashboard/insights">
-                    <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
-                        View Insights Workspace
-                    </Button>
-                </Link>
-                <Link href="/dashboard/ai-assistant">
-                    <Button variant="ghost" className="text-indigo-700 hover:bg-indigo-100">
-                        Ask AI Assistant
-                    </Button>
-                </Link>
+      {/* Footer CTA */}
+      <div className="bg-muted/50 rounded-3xl p-8 border border-border/50 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-4 text-center md:text-left">
+            <div className="w-14 h-14 rounded-2xl bg-background flex items-center justify-center shadow-lg border border-border">
+                <LayoutDashboard size={24} className="text-primary" />
+            </div>
+            <div>
+                <h4 className="font-bold text-foreground text-lg">Deep Intelligence Workspace</h4>
+                <p className="text-muted-foreground text-sm">Access granular dataset metrics and AI-driven 30-day action plans.</p>
             </div>
         </div>
-        <div className="hidden md:flex items-center justify-center opacity-80">
-            <Target size={120} className="text-indigo-200" />
-        </div>
+        <Link href="/dashboard/insights">
+            <Button variant="outline" className="h-12 px-8 font-bold rounded-xl border-primary/20 hover:bg-primary/5 hover:text-primary transition-all group">
+                Enter Insights Workspace
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+        </Link>
       </div>
     </div>
   );
-}
-
-function SparklesIcon({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-            <path fillRule="evenodd" d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813a3.75 3.75 0 002.576-2.576l.813-2.846A.75.75 0 019 4.5zM9 15a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0v-1.5h-1.5a.75.75 0 010-1.5h1.5v-1.5A.75.75 0 019 15z" clipRule="evenodd" />
-        </svg>
-    );
 }

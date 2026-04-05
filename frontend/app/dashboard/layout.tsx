@@ -18,7 +18,7 @@ export default function DashboardLayout({
     <>
       <SignedIn>
         <DashboardProvider>
-          <div className="min-h-screen bg-gray-50 flex">
+          <div className="min-h-screen bg-background flex text-foreground">
             <Sidebar 
               isOpen={sidebarOpen} 
               isMobileOpen={mobileOpen} 
@@ -27,7 +27,7 @@ export default function DashboardLayout({
  
             <div 
               className={`
-                flex-1 flex flex-col transition-all duration-300 ease-in-out
+                flex-1 flex flex-col transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]
                 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'}
               `}
             >
@@ -36,9 +36,15 @@ export default function DashboardLayout({
                 onToggleMobile={() => setMobileOpen(!mobileOpen)}
               />
  
-              <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
-                <div className="max-w-7xl mx-auto">
+              <main className="flex-1 p-6 md:p-10 overflow-x-hidden relative">
+                <div className="max-w-[1600px] mx-auto relative z-10">
                   {children}
+                </div>
+                
+                {/* Subtle background decoration */}
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-0">
+                    <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
+                    <div className="absolute bottom-[-5%] left-[-5%] w-[30%] h-[30%] bg-indigo-500/5 rounded-full blur-[100px]" />
                 </div>
               </main>
             </div>

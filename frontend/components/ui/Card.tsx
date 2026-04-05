@@ -11,8 +11,8 @@ export const Card = ({ children, className = '', hover = false, style }: CardPro
   return (
     <div
       className={`
-        card relative bg-white/95 backdrop-blur border border-gray-200 rounded-xl p-6 shadow-sm
-        ${hover ? 'hover:shadow-md hover:border-blue-500/30 transition-all duration-300 hover:-translate-y-1' : ''}
+        card relative bg-card/95 backdrop-blur border border-border/50 rounded-xl p-6 shadow-sm
+        ${hover ? 'hover:shadow-md hover:border-primary/30 transition-all duration-300 hover:-translate-y-1' : ''}
         ${className}
       `}
       style={style}
