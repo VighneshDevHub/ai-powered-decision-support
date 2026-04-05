@@ -96,6 +96,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Fix for html2canvas oklab/oklch error */
+[id$="-content"], 
+[id$="-content"] * {
+  color-scheme: light !important;
+}
+
 /* Glassmorphism utility */
 .glass {
   background: rgba(255, 255, 255, 0.7); /* Increased opacity from 0.05 */

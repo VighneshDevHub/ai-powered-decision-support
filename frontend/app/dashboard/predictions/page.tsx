@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useDashboard } from '@/context/DashboardContext';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -17,8 +17,12 @@ import {
   BrainCircuit,
   ShieldCheck,
   ChevronRight,
-  ArrowRight
+  ArrowRight,
+  Download,
+  FileText
 } from 'lucide-react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import { 
   XAxis, 
   YAxis, 
@@ -31,6 +35,72 @@ import {
 
 export default function PredictionsPage() {
   const { processedData, isLoading } = useDashboard();
+  const [isExporting, setIsExporting] = useState(false);
+
+  const exportToPDF = async () => {
+    setIsExporting(true);
+    const element = document.getElementById('predictions-content');
+    if (!element) return;
+
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        onclone: (clonedDoc) => {
+          const el = clonedDoc.getElementById('predictions-content');
+          if (el) {
+            el.style.colorScheme = 'light';
+          }
+        }
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Neural-Forecast-${new Date().toLocaleDateString()}.pdf`);
+    } catch (error) {
+      console.error('PDF Export failed:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const exportToCSV = () => {
+    const predictionData = [
+      { name: 'Month 1', actual: 4000, predicted: 4000 },
+      { name: 'Month 2', actual: 3000, predicted: 3100 },
+      { name: 'Month 3', actual: 2000, predicted: 2200 },
+      { name: 'Month 4', actual: 2780, predicted: 2800 },
+      { name: 'Month 5', actual: 1890, predicted: 2100 },
+      { name: 'Month 6', actual: 2390, predicted: 2500 },
+      { name: 'Forecast 1', predicted: 3000 },
+      { name: 'Forecast 2', predicted: 3400 },
+      { name: 'Forecast 3', predicted: 3800 },
+    ];
+
+    const headers = ['Period', 'Actual', 'Predicted'];
+    const rows = predictionData.map(d => [d.name, d.actual || '', d.predicted]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Neural-Forecast-${new Date().toLocaleDateString()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   if (isLoading) {
     return (
@@ -91,12 +161,39 @@ export default function PredictionsPage() {
             <p className="text-lg text-muted-foreground">AI-driven forecasting and future trend analysis based on historical patterns.</p>
         </div>
         <div className="flex gap-3">
-            <Button className="h-12 px-6 font-bold rounded-xl shadow-xl shadow-primary/20 group">
+            <Button 
+                variant="outline" 
+                onClick={exportToCSV}
+                className="h-12 px-6 font-bold rounded-xl border-border/50 hover:bg-muted group transition-all"
+            >
+                <FileText size={18} className="mr-2 text-muted-foreground group-hover:text-primary transition-colors" />
+                Export CSV
+            </Button>
+            <Button 
+                onClick={exportToPDF}
+                disabled={isExporting}
+                className="h-12 px-6 font-bold rounded-xl shadow-xl shadow-primary/20 group relative overflow-hidden"
+            >
+                {isExporting ? (
+                    <Loader2 size={18} className="animate-spin" />
+                ) : (
+                    <>
+                        <Download size={18} className="mr-2 group-hover:translate-y-0.5 transition-transform" />
+                        Download PDF Report
+                    </>
+                )}
+            </Button>
+            <Button 
+                className="h-12 px-6 font-bold rounded-xl shadow-xl shadow-primary/20 group"
+                onClick={() => alert('Neural engine re-calculating... Model refresh in progress.')}
+            >
                 <Sparkles size={18} className="mr-2 group-hover:rotate-12 transition-transform" />
                 Run New Forecast
             </Button>
         </div>
       </div>
+
+      <div id="predictions-content" className="space-y-10">
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
         {/* Forecast Chart */}
@@ -246,7 +343,7 @@ export default function PredictionsPage() {
                     </div>
                     <h3 className="font-bold text-lg text-foreground mb-1 tracking-tight">{scenario.title}</h3>
                     <p className="text-2xl font-black text-primary mb-3 tracking-tighter">{scenario.growth}</p>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-6 font-medium">{scenario.desc}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-6 font-medium">{scenario.desc}</p>
                     <Button 
                         variant="outline" 
                         className="w-full h-11 rounded-xl border-border/50 text-xs font-bold hover:bg-primary/5 hover:text-primary transition-all group"
@@ -257,6 +354,7 @@ export default function PredictionsPage() {
                     </Button>
                 </Card>
             ))}
+          </div>
         </div>
       </div>
     </div>

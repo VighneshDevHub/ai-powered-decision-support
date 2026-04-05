@@ -1,36 +1,83 @@
- This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🖼️ Intellexa Frontend
 
-## Getting Started
+[![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)](https://react.dev/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![Tailwind](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
-First, run the development server:
+The frontend of **Intellexa.ai** is a modern, high-performance web application built with **Next.js 15** and **React 19**. It features a beautiful glassmorphism-inspired UI and provides an intuitive workspace for data analysis.
+
+---
+
+## 🎨 UI & UX Highlights
+
+- **Glassmorphism Design**: A sleek, translucent interface with vibrant gradients and smooth transitions.
+- **Dynamic Dashboard**: Interactive charts and stats cards that update in real-time as data is processed.
+- **AI Workspace**: A feature-rich chat interface for interacting with the neural engine.
+- **Data Explorer**: A dedicated, high-performance table view for metric analysis.
+- **Responsive Layout**: Optimized for both desktop and mobile workflows.
+
+---
+
+## 🛠️ Core Technologies
+
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **State Management**: [React Context API](https://react.dev/reference/react/createContext)
+- **Data Visualization**: [Recharts](https://recharts.org/) for neural metrics.
+- **Authentication**: [Clerk](https://clerk.com/) for secure identity management.
+- **Icons**: [Lucide React](https://lucide.dev/) for consistent, scalable iconography.
+- **Exporting**: [jsPDF](https://github.com/parallax/jsPDF) and [html2canvas](https://html2canvas.hertzen.com/) for PDF report generation.
+
+---
+
+## 📂 Project Structure
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+frontend/
+├── app/                 # Next.js App Router (Pages & Layouts)
+│   ├── dashboard/       # Core dashboard workspace
+│   │   ├── ai-assistant # Neural Chat UI
+│   │   ├── explorer     # Data Registry Explorer
+│   │   └── insights     # Strategic Intelligence View
+│   └── api/             # Frontend-to-Backend proxy routes
+├── components/          # Reusable UI components
+│   ├── dashboard/       # Dashboard-specific elements
+│   ├── landing/         # Marketing site components
+│   └── ui/              # Base Atomic components (Card, Button, etc.)
+├── context/             # Global state (Dashboard & Theme)
+├── lib/                 # Utility functions & helpers
+└── public/              # Static assets (images, fonts, logos)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Install Dependencies**
+   ```bash
+   pnpm install
+   ```
 
-## Learn More
+2. **Environment Configuration**
+   Create a `.env.local` file:
+   ```env
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_key
+   CLERK_SECRET_KEY=your_secret
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. **Development Mode**
+   ```bash
+   pnpm dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. **Build for Production**
+   ```bash
+   pnpm build
+   pnpm start
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<p align="center">
+  Built with ❤️ for Strategic Intelligence
+</p>

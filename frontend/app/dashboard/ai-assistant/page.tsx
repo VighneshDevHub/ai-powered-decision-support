@@ -34,6 +34,19 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { 
+  BarChart, 
+  Bar, 
+  LineChart, 
+  Line, 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer 
+} from 'recharts';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -292,15 +305,80 @@ export default function AIAssistantPage() {
                         <div className="text-sm leading-relaxed max-w-none">
                             {msg.role === 'assistant' ? (
                                 <ReactMarkdown 
-                                     remarkPlugins={[remarkGfm]}
-                                     components={{
-                                        p: ({children}) => <p className="mb-4 last:mb-0">{children}</p>,
-                                        strong: ({children}) => <strong className="font-bold text-primary">{children}</strong>,
-                                        ul: ({children}) => <ul className="list-disc ml-6 mb-4 space-y-1">{children}</ul>,
-                                        ol: ({children}) => <ol className="list-decimal ml-6 mb-4 space-y-1">{children}</ol>,
-                                        li: ({children}) => <li className="mb-1">{children}</li>,
-                                    }}
-                                >
+                                      remarkPlugins={[remarkGfm]}
+                                      components={{
+                                         p: ({children}) => <p className="mb-4 last:mb-0">{children}</p>,
+                                         strong: ({children}) => <strong className="font-bold text-primary">{children}</strong>,
+                                         ul: ({children}) => <ul className="list-disc ml-6 mb-4 space-y-1">{children}</ul>,
+                                         ol: ({children}) => <ol className="list-decimal ml-6 mb-4 space-y-1">{children}</ol>,
+                                         li: ({children}) => <li className="mb-1">{children}</li>,
+                                         code: ({node, inline, className, children, ...props}: any) => {
+                                            const match = /language-(\w+)/.exec(className || '');
+                                            const isChart = match && match[1] === 'chart-json';
+                                            
+                                            if (!inline && isChart) {
+                                                try {
+                                                    const chartData = JSON.parse(String(children).replace(/\n/g, ''));
+                                                    return (
+                                                        <div className="my-6 p-4 bg-muted/30 rounded-2xl border border-border/50 h-[300px] w-full animate-in fade-in zoom-in duration-500">
+                                                            <div className="flex items-center justify-between mb-4">
+                                                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{chartData.title || 'AI Analysis Chart'}</h4>
+                                                                <div className="flex gap-1.5">
+                                                                    <div className="w-2 h-2 rounded-full bg-primary/20" />
+                                                                    <div className="w-2 h-2 rounded-full bg-primary/40" />
+                                                                    <div className="w-2 h-2 rounded-full bg-primary" />
+                                                                </div>
+                                                            </div>
+                                                            <ResponsiveContainer width="100%" height="100%">
+                                                                {chartData.type === 'bar' ? (
+                                                                    <BarChart data={chartData.data}>
+                                                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(var(--primary), 0.1)" />
+                                                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 'bold'}} />
+                                                                        <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 'bold'}} />
+                                                                        <Tooltip 
+                                                                            contentStyle={{backgroundColor: 'hsl(var(--card))', borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '12px', fontWeight: 'bold'}}
+                                                                            cursor={{fill: 'rgba(var(--primary), 0.05)'}}
+                                                                        />
+                                                                        <Bar dataKey="value" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+                                                                    </BarChart>
+                                                                ) : chartData.type === 'line' ? (
+                                                                    <LineChart data={chartData.data}>
+                                                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(var(--primary), 0.1)" />
+                                                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 'bold'}} />
+                                                                        <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 'bold'}} />
+                                                                        <Tooltip 
+                                                                            contentStyle={{backgroundColor: 'hsl(var(--card))', borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '12px', fontWeight: 'bold'}}
+                                                                        />
+                                                                        <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={3} dot={{r: 4, fill: 'hsl(var(--primary))'}} activeDot={{r: 6}} />
+                                                                    </LineChart>
+                                                                ) : (
+                                                                    <AreaChart data={chartData.data}>
+                                                                        <defs>
+                                                                            <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                                                                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                                                                                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                                                                            </linearGradient>
+                                                                        </defs>
+                                                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(var(--primary), 0.1)" />
+                                                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 'bold'}} />
+                                                                        <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 'bold'}} />
+                                                                        <Tooltip 
+                                                                            contentStyle={{backgroundColor: 'hsl(var(--card))', borderRadius: '12px', border: '1px solid hsl(var(--border))', fontSize: '12px', fontWeight: 'bold'}}
+                                                                        />
+                                                                        <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
+                                                                    </AreaChart>
+                                                                )}
+                                                            </ResponsiveContainer>
+                                                        </div>
+                                                    );
+                                                } catch (e) {
+                                                    return <code className={className} {...props}>{children}</code>;
+                                                }
+                                            }
+                                            return <code className={className} {...props}>{children}</code>;
+                                         }
+                                     }}
+                                 >
                                     {msg.content}
                                 </ReactMarkdown>
                             ) : (

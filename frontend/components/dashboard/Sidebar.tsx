@@ -14,7 +14,8 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
-  Settings
+  Settings,
+  Database
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -28,6 +29,7 @@ const menuItems = [
   { name: 'Upload Data', href: '/dashboard/upload', icon: UploadCloud },
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Insights & Data', href: '/dashboard/insights', icon: BarChart2 },
+  { name: 'Data Explorer', href: '/dashboard/explorer', icon: Database },
   { name: 'AI Assistant', href: '/dashboard/ai-assistant', icon: Sparkles },
   { name: 'Predictions', href: '/dashboard/predictions', icon: TrendingUp },
   { name: 'Profile', href: '/dashboard/profile', icon: UserCircle },
