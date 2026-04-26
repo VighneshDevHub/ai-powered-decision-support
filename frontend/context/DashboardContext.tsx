@@ -32,8 +32,21 @@ export interface ProcessedDataset {
   data_confidence: number;
   ai_confidence: number;
   metrics: MetricResult[];
-  insights: string[];
+  insights: (string | { insight: string; risk?: string; action?: string })[];
   action_plan_30_days: string[];
+  quality_analysis?: {
+    quality_score: number;
+    suggestions: {
+      issue: string;
+      recommendation: string;
+    }[];
+  };
+  predictions?: {
+    target: string;
+    trend: 'up' | 'down' | 'stable';
+    reasoning: string;
+    confidence: 'high' | 'medium' | 'low';
+  }[];
   [key: string]: unknown;
 }
 

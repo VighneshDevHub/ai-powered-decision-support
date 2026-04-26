@@ -47,12 +47,11 @@ export default function UploadPage() {
       
       if (ext === 'csv' || ext === 'xlsx') {
         setFile(selectedFile);
-        setError(null);
         if (!nickname) {
           setNickname(selectedFile.name.split('.')[0]);
         }
       } else {
-        setError('Only CSV and XLSX files are supported.');
+        showToast('Only CSV and XLSX files are supported.', 'error');
         setFile(null);
       }
     }
