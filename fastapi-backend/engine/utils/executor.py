@@ -6,15 +6,28 @@ def execute_metrics(df, ai_plan, ai_context):
     results = []
     date_col = ai_context["date_columns"][0] if ai_context["date_columns"] else None
 
-    for m in ai_plan["metrics"]:
-        name = m["name"]
-        mtype = m["type"]
-        cols = m["columns"]
+    # ai_plan should be a dict with a "metrics" key, but LLMs sometimes return a list directly
+    plan_metrics = []
+    if isinstance(ai_plan, dict):
+        plan_metrics = ai_plan.get("metrics", [])
+    elif isinstance(ai_plan, list):
+        plan_metrics = ai_plan
+
+    for m in plan_metrics:
+        if not isinstance(m, dict):
+            continue
+            
+        name = m.get("name", "Unknown Metric")
+        mtype = m.get("type", "unknown")
+        cols = m.get("columns", [])
 
         try:
  
             if mtype == "aggregation":
                 stats = calculate_aggregation(df, cols[0])
+                if not isinstance(stats, dict) or not stats:
+                    raise ValueError(f"No numeric data found in column '{cols[0]}'")
+                
                 results.append({
                     "metric": name,
                     "type": mtype,
@@ -23,9 +36,9 @@ def execute_metrics(df, ai_plan, ai_context):
                         "labels": list(stats.keys()),
                         "values": list(stats.values())
                     },
-                    "importance": m["importance"],
+                    "importance": m.get("importance", "medium"),
                     "derived_from": cols,
-                    "ai_reason": m["reason"]
+                    "ai_reason": m.get("reason", "")
                 })
 
             elif mtype == "distribution":
@@ -38,9 +51,9 @@ def execute_metrics(df, ai_plan, ai_context):
                         "labels": list(dist.keys()),
                         "values": list(dist.values())
                     },
-                    "importance": m["importance"],
+                    "importance": m.get("importance", "medium"),
                     "derived_from": cols,
-                    "ai_reason": m["reason"]
+                    "ai_reason": m.get("reason", "")
                 })
 
             elif mtype == "ratio":
@@ -53,9 +66,9 @@ def execute_metrics(df, ai_plan, ai_context):
                         "labels": [name],
                         "values": [value]
                     },
-                    "importance": m["importance"],
+                    "importance": m.get("importance", "medium"),
                     "derived_from": cols,
-                    "ai_reason": m["reason"]
+                    "ai_reason": m.get("reason", "")
                 })
 
             elif mtype == "trend":
@@ -71,9 +84,9 @@ def execute_metrics(df, ai_plan, ai_context):
                         "labels": ["trend"],
                         "values": [trend_value]
                     },
-                    "importance": m["importance"],
+                    "importance": m.get("importance", "medium"),
                     "derived_from": cols,
-                    "ai_reason": m["reason"]
+                    "ai_reason": m.get("reason", "")
                 })
 
         except Exception as e:

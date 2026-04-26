@@ -45,7 +45,7 @@ def calculate_aggregation(df, column):
     values = _safe_series(df, column).dropna()
 
     if values.empty:
-        return "no_numeric_data"
+        return {}
 
     return {
         "mean": float(values.mean()),

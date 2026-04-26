@@ -1,5 +1,9 @@
 import os
 import uuid
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Query
 from pydantic import BaseModel
@@ -36,10 +40,13 @@ async def upload_and_process(
     file: UploadFile = File(...),
     nickname: str = Form(None),
 ):
+    logger.info(f"Upload request received: filename={file.filename}, clerkUserId={clerkUserId}, nickname={nickname}")
     if not file.filename:
+        logger.error("Empty filename received")
         raise HTTPException(status_code=400, detail="empty filename")
 
     if not allowed_file(file.filename):
+        logger.error(f"Unsupported file extension: {file.filename}")
         raise HTTPException(status_code=400, detail="only csv and xlsx supported for now")
 
     # Sanitise filename
@@ -55,17 +62,22 @@ async def upload_and_process(
 
     os.makedirs(RAW_STORAGE_PATH, exist_ok=True)
     file_path = os.path.join(RAW_STORAGE_PATH, system_filename)
+    logger.info(f"Saving file to: {file_path}")
 
     try:
         contents = await file.read()
+        logger.info(f"File read into memory, size: {len(contents)} bytes")
         with open(file_path, "wb") as f:
             f.write(contents)
+        logger.info("File written to disk successfully")
 
+        logger.info("Starting processing...")
         result = process_file_and_store(
             file_path=file_path,
             clerk_user_id=clerkUserId,
             nickname=nickname
         )
+        logger.info("Processing completed successfully")
 
         return {
             "message": "file uploaded and processed successfully",
@@ -78,7 +90,9 @@ async def upload_and_process(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"file processing failed: {e}")
+        logger.error(f"Exception during upload/process: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"file processing failed: {str(e)}")
 
 
 # ──────────────────────────────────────────────────────────────────────────────

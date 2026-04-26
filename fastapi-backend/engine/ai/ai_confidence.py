@@ -9,6 +9,9 @@ def calculate_ai_confidence(data_confidence: float, metrics: list) -> int:
     max_weight = 0
 
     for m in metrics:
+        if not isinstance(m, dict):
+            continue
+            
         importance = m.get("importance", "medium")
 
         weight = {
@@ -19,9 +22,11 @@ def calculate_ai_confidence(data_confidence: float, metrics: list) -> int:
 
         max_weight += weight
 
-        value = m.get("value") or m.get("values")
+        # Correctly access nested data values from executor output
+        data_obj = m.get("data", {})
+        values = data_obj.get("values", [])
 
-        if value is not None and value != []:
+        if values:
             valid += 1
             weighted_score += weight
 

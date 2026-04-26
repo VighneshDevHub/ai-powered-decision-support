@@ -6,8 +6,12 @@ def build_context_snapshot(processed_result: dict) -> dict:
             key_metrics.append(m["metric"])
 
     key_insights = []
-    for i in processed_result["insights"].get("insights", []):
-        key_insights.append(i["insight"])
+    # insights is already a list of dicts (from process_and_store.py)
+    for i in processed_result["insights"]:
+        if isinstance(i, dict) and "insight" in i:
+            key_insights.append(i["insight"])
+        elif isinstance(i, str):
+            key_insights.append(i)
 
     return {
         "file_name": processed_result["file_name"],

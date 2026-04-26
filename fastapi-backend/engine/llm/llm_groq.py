@@ -46,7 +46,27 @@ def llm_call_fn(prompt: str) -> dict:
             )
 
             raw = response.choices[0].message.content.strip()
-            return json.loads(raw)
+            
+            # Robust JSON extraction
+            if raw.startswith("```"):
+                # Handle markdown code blocks
+                import re
+                match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", raw)
+                if match:
+                    raw = match.group(1).strip()
+
+            try:
+                return json.loads(raw)
+            except json.JSONDecodeError as e:
+                # One last attempt: maybe there's junk outside the braces
+                import re
+                match = re.search(r"(\{[\s\S]*\}|\[[\s\S]*\])", raw)
+                if match:
+                    try:
+                        return json.loads(match.group(1).strip())
+                    except:
+                        pass
+                raise e
 
         except BadRequestError as e:
             # model deprecated or unavailable → try next

@@ -80,8 +80,15 @@ export default function UploadPage() {
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || 'Upload failed');
+          let errorMessage = 'Upload failed';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.detail || errorMessage;
+          } catch (e) {
+            // If not JSON, use the status text or a generic message
+            errorMessage = `Server Error (${response.status}): ${response.statusText || 'Internal Server Error'}`;
+          }
+          throw new Error(errorMessage);
         }
       } else {
         if (!sheetUrl) {
@@ -103,8 +110,14 @@ export default function UploadPage() {
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || 'Processing Google Sheet failed');
+          let errorMessage = 'Processing Google Sheet failed';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.detail || errorMessage;
+          } catch (e) {
+            errorMessage = `Server Error (${response.status}): ${response.statusText || 'Internal Server Error'}`;
+          }
+          throw new Error(errorMessage);
         }
       }
 
