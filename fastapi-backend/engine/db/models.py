@@ -6,7 +6,8 @@ from mongoengine import (
     EmbeddedDocument,
     EmbeddedDocumentField,
     ObjectIdField,
-    FloatField
+    FloatField,
+    DictField
 )
 from datetime import datetime
 
@@ -44,12 +45,13 @@ class DocumentFile(Document):
 class ChatMessage(EmbeddedDocument):
     role = StringField(required=True, choices=["user", "assistant"])
     content = StringField(required=True)
+    chartConfig = DictField(required=False, null=True)
     timestamp = DateTimeField(default=datetime.utcnow)
 
 
 class ChatSession(Document):
     userId = StringField(required=True, index=True)
-    documentId = ObjectIdField(required=True, index=True)
+    documentId = StringField(required=True, index=True)
 
     summary = StringField(default="")
 

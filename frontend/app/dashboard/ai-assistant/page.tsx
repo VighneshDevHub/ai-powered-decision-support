@@ -51,6 +51,7 @@ import {
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  chart_config?: any;
 }
 
 export default function AIAssistantPage() {
@@ -63,6 +64,7 @@ export default function AIAssistantPage() {
   const [isSending, setIsSending] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isGlobalMode, setIsGlobalMode] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -73,14 +75,15 @@ export default function AIAssistantPage() {
     }
   }, [documents, selectedDocId]);
 
-  // Load chat history when document changes
+  // Load chat history when document changes or mode changes
   useEffect(() => {
     const loadHistory = async () => {
-      if (!user || !selectedDocId) return;
+      if (!user || (!selectedDocId && !isGlobalMode)) return;
       
       setIsLoadingHistory(true);
       try {
-        const response = await fetch(`/api/chat/history?clerkUserId=${user.id}&documentId=${selectedDocId}`);
+        const docId = isGlobalMode ? 'global' : selectedDocId;
+        const response = await fetch(`/api/chat/history?clerkUserId=${user.id}&documentId=${docId}`);
         if (response.ok) {
           const data = await response.json();
           setMessages(data.messages || []);
@@ -93,7 +96,7 @@ export default function AIAssistantPage() {
     };
 
     loadHistory();
-  }, [user, selectedDocId]);
+  }, [user, selectedDocId, isGlobalMode]);
 
   // Scroll to bottom
   useEffect(() => {
@@ -101,27 +104,32 @@ export default function AIAssistantPage() {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!user || !selectedDocId || !input.trim() || isSending) return;
-
     const userMessage = input.trim();
+    if (!userMessage || !user || (!selectedDocId && !isGlobalMode) || isSending) return;
+
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsSending(true);
 
     try {
-      const response = await fetch('/api/chat/ask', {
+      const endpoint = isGlobalMode ? '/api/chat/ask-global' : '/api/chat/ask';
+      const body = isGlobalMode 
+        ? { clerkUserId: user.id, question: userMessage }
+        : { clerkUserId: user.id, documentId: selectedDocId, question: userMessage };
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          clerkUserId: user.id,
-          documentId: selectedDocId,
-          question: userMessage
-        }),
+        body: JSON.stringify(body),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setMessages(prev => [...prev, { role: 'assistant', content: data.answer }]);
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: data.answer,
+          chart_config: data.chart_config 
+        }]);
       } else {
         throw new Error('Failed to get response');
       }
@@ -200,25 +208,50 @@ export default function AIAssistantPage() {
         </div>
 
         <div className="flex items-center gap-3 w-full lg:w-auto">
-            <div className="relative flex-1 lg:w-80 group">
-                <select 
-                    value={selectedDocId} 
-                    onChange={(e) => setSelectedDocId(e.target.value)}
-                    className="w-full pl-12 pr-10 py-3.5 bg-card border border-border/50 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none appearance-none transition-all shadow-sm cursor-pointer group-hover:border-primary/50"
+            <div className="flex bg-muted/30 p-1 rounded-2xl border border-border/50">
+                <button 
+                    onClick={() => setIsGlobalMode(false)}
+                    className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!isGlobalMode ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                    {documents.map(doc => (
-                        <option key={doc.documentId} value={doc.documentId}>
-                            {doc.nickname || doc.originalFileName}
-                        </option>
-                    ))}
-                </select>
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-primary">
-                    <Database size={18} />
-                </div>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none group-hover:text-primary transition-colors">
-                    <ChevronDown size={18} />
-                </div>
+                    Document
+                </button>
+                <button 
+                    onClick={() => setIsGlobalMode(true)}
+                    className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${isGlobalMode ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                    Global
+                </button>
             </div>
+
+            {!isGlobalMode && (
+                <div className="relative flex-1 lg:w-80 group animate-in slide-in-from-right-4 duration-300">
+                    <select 
+                        value={selectedDocId} 
+                        onChange={(e) => setSelectedDocId(e.target.value)}
+                        className="w-full pl-12 pr-10 py-3.5 bg-card border border-border/50 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none appearance-none transition-all shadow-sm cursor-pointer group-hover:border-primary/50"
+                    >
+                        {documents.map(doc => (
+                            <option key={doc.documentId} value={doc.documentId}>
+                                {doc.nickname || doc.originalFileName}
+                            </option>
+                        ))}
+                    </select>
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-primary">
+                        <Database size={18} />
+                    </div>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none group-hover:text-primary transition-colors">
+                        <ChevronDown size={18} />
+                    </div>
+                </div>
+            )}
+            
+            {isGlobalMode && (
+                <div className="flex-1 lg:w-80 px-6 py-3.5 bg-primary/5 border border-primary/20 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-3 animate-in slide-in-from-left-4 duration-300">
+                    <Sparkles size={18} className="animate-pulse" />
+                    Global Analysis Mode
+                </div>
+            )}
+
             <div className="flex gap-2">
                 <Button 
                     variant="outline" 
@@ -289,7 +322,8 @@ export default function AIAssistantPage() {
               ) : (
                 <div className="space-y-8">
                     {messages.map((msg, i) => (
-                    <div key={i} className={`flex gap-4 ${msg.role === 'assistant' ? 'items-start' : 'items-start flex-row-reverse'}`}>
+                    <div key={i} className="space-y-4">
+                      <div className={`flex gap-4 ${msg.role === 'assistant' ? 'items-start' : 'items-start flex-row-reverse'}`}>
                         <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all border border-border/50 ${
                         msg.role === 'assistant' ? 'bg-card text-primary' : 'bg-primary text-white'
                         }`}>
@@ -375,15 +409,74 @@ export default function AIAssistantPage() {
                                             }
                                             return <code className={className} {...props}>{children}</code>;
                                          }
-                                     }}
-                                 >
+                                      }}
+                                >
                                     {msg.content}
                                 </ReactMarkdown>
                             ) : (
-                                <div className="whitespace-pre-wrap">{msg.content}</div>
+                                <p>{msg.content}</p>
                             )}
                         </div>
                         </div>
+                      </div>
+
+                      {/* Explicitly rendered chart if chart_config is present */}
+                      {msg.chart_config && (
+                        <div className={`ml-14 max-w-4xl animate-in slide-in-from-left-4 duration-500 ${msg.role === 'user' ? 'mr-14 ml-0' : ''}`}>
+                           <Card className="p-6 border-border/50 bg-card/60 backdrop-blur-sm rounded-2xl">
+                             <div className="flex items-center justify-between mb-6">
+                               <div className="flex items-center gap-3">
+                                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                                   <TrendingUp className="text-primary" size={20} />
+                                 </div>
+                                 <div>
+                                   <h4 className="font-black text-foreground text-sm">{msg.chart_config.title || 'AI Analysis Chart'}</h4>
+                                   <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Automatic Visualization</p>
+                                 </div>
+                               </div>
+                               <div className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-[9px] font-black text-muted-foreground uppercase tracking-widest">
+                                 <Sparkles size={10} className="text-primary" /> AI Generated
+                               </div>
+                             </div>
+
+                             <div className="h-[300px] w-full">
+                               <ResponsiveContainer width="100%" height="100%">
+                                 {msg.chart_config.type === 'line' ? (
+                                   <LineChart data={msg.chart_config.labels.map((label: string, idx: number) => ({ name: label, value: msg.chart_config.values[idx] }))}>
+                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
+                                     <XAxis dataKey="name" tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }} axisLine={false} tickLine={false} />
+                                     <YAxis tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }} axisLine={false} tickLine={false} />
+                                     <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--card)' }} />
+                                     <Line type="monotone" dataKey="value" stroke="var(--primary)" strokeWidth={3} dot={{ r: 4, fill: 'var(--primary)', strokeWidth: 2, stroke: 'var(--card)' }} activeDot={{ r: 6, strokeWidth: 0 }} />
+                                   </LineChart>
+                                 ) : msg.chart_config.type === 'scatter' ? (
+                                   <AreaChart data={msg.chart_config.labels.map((label: string, idx: number) => ({ name: label, value: msg.chart_config.values[idx] }))}>
+                                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
+                                      <XAxis dataKey="name" tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }} axisLine={false} tickLine={false} />
+                                      <YAxis tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }} axisLine={false} tickLine={false} />
+                                      <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--card)' }} />
+                                      <Area type="monotone" dataKey="value" stroke="var(--primary)" fill="var(--primary)" fillOpacity={0.1} strokeWidth={3} />
+                                   </AreaChart>
+                                 ) : (
+                                   <BarChart data={msg.chart_config.labels.map((label: string, idx: number) => ({ name: label, value: msg.chart_config.values[idx] }))}>
+                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
+                                     <XAxis dataKey="name" tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }} axisLine={false} tickLine={false} />
+                                     <YAxis tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }} axisLine={false} tickLine={false} />
+                                     <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--card)' }} />
+                                     <Bar dataKey="value" fill="var(--primary)" radius={[6, 6, 0, 0]} barSize={30} />
+                                   </BarChart>
+                                 )}
+                               </ResponsiveContainer>
+                             </div>
+                             {msg.chart_config.reasoning && (
+                               <p className="mt-4 text-[11px] text-muted-foreground italic leading-relaxed">
+                                 <span className="font-black uppercase tracking-widest text-[9px] mr-2 text-primary not-italic">AI Rationale:</span>
+                                 {msg.chart_config.reasoning}
+                               </p>
+                             )}
+                           </Card>
+                        </div>
+                      )}
                     </div>
                     ))}
                 </div>

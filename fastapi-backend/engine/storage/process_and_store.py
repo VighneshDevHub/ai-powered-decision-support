@@ -11,6 +11,8 @@ from engine.utils.executor import execute_metrics
 from engine.ai.insight_generator import generate_top_insights
 from engine.ai.ai_confidence import calculate_ai_confidence
 from engine.ai.action_plan import generate_30_day_plan
+from engine.ai.quality_analyst import generate_quality_suggestions
+from engine.ai.predictor import generate_predictions
 from engine.context.context_snapshot import build_context_snapshot
 from engine.storage.storage import save_processed_json, save_context_json
 from engine.llm.llm_groq import llm_call_fn
@@ -94,6 +96,21 @@ def process_file_and_store(
         logger.error(traceback.format_exc())
         action_plan = []
 
+    # New Features: Quality Suggestions and Predictions
+    try:
+        quality_analysis = generate_quality_suggestions(llm_call_fn, context)
+        logger.info(f"Quality analysis generated")
+    except Exception as e:
+        logger.error(f"Error generating quality suggestions for {file_name}: {e}")
+        quality_analysis = {"quality_score": 0, "suggestions": []}
+
+    try:
+        predictions = generate_predictions(llm_call_fn, metrics, context)
+        logger.info(f"Predictions generated")
+    except Exception as e:
+        logger.error(f"Error generating predictions for {file_name}: {e}")
+        predictions = {"predictions": []}
+
     # Normalize insights to a list
     final_insights = []
     logger.info(f"Normalizing insights: {type(insights)}")
@@ -134,6 +151,21 @@ def process_file_and_store(
         # Fallback for unexpected types
         final_action_plan = [str(action_plan)] if action_plan else []
 
+    # Normalize Quality Analysis
+    final_quality = {"quality_score": 0, "suggestions": []}
+    if isinstance(quality_analysis, dict):
+        final_quality["quality_score"] = quality_analysis.get("quality_score", 0)
+        suggestions = quality_analysis.get("suggestions", [])
+        final_quality["suggestions"] = suggestions if isinstance(suggestions, list) else [suggestions]
+    
+    # Normalize Predictions
+    final_predictions = []
+    if isinstance(predictions, dict):
+        preds = predictions.get("predictions", [])
+        final_predictions = preds if isinstance(preds, list) else [predictions]
+    elif isinstance(predictions, list):
+        final_predictions = predictions
+
     processed_output = {
         "file_name": file_name,
         "nickname": nickname,
@@ -141,7 +173,9 @@ def process_file_and_store(
         "ai_confidence": float(ai_confidence),
         "metrics": metrics,
         "insights": final_insights,
-        "action_plan_30_days": final_action_plan
+        "action_plan_30_days": final_action_plan,
+        "quality_analysis": final_quality,
+        "predictions": final_predictions
     }
 
     context_snapshot = build_context_snapshot(processed_output)

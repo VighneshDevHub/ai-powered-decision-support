@@ -20,7 +20,10 @@ import {
   Database,
   BrainCircuit,
   Download,
-  Share2
+  Share2,
+  CheckCircle2,
+  LineChart as LineChartIcon,
+  Activity
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -278,6 +281,78 @@ export default function InsightsPage() {
                 <Sparkles className="text-primary animate-pulse" size={24} />
                 Neural Insight Stream
               </h3>
+              
+              {/* Data Quality Analysis */}
+              {currentDataset.quality_analysis && (
+                <Card className="p-6 border-none shadow-xl bg-primary/5 rounded-3xl mb-8 overflow-hidden relative group">
+                  <div className="absolute top-0 right-0 p-8 opacity-10 transition-transform group-hover:scale-110">
+                    <ShieldCheck size={120} />
+                  </div>
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center">
+                          <ShieldCheck className="text-primary" size={24} />
+                        </div>
+                        <div>
+                          <h4 className="font-black text-foreground">Data Quality Assessment</h4>
+                          <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Reliability Index</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-3xl font-black text-primary">{currentDataset.quality_analysis.quality_score}%</div>
+                        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Score</div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {currentDataset.quality_analysis.suggestions?.map((s: any, idx: number) => (
+                        <div key={idx} className="p-4 rounded-2xl bg-background/50 border border-primary/10 hover:border-primary/30 transition-all">
+                          <div className="flex items-start gap-3">
+                            <CheckCircle2 size={16} className="text-primary mt-1 shrink-0" />
+                            <div>
+                              <p className="text-xs font-bold text-foreground mb-1">{s.issue}</p>
+                              <p className="text-[11px] text-muted-foreground leading-relaxed">{s.recommendation}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              )}
+
+              {/* Predictions */}
+              {currentDataset.predictions && currentDataset.predictions.length > 0 && (
+                <div className="space-y-4 mb-8">
+                  <h3 className="font-black text-foreground flex items-center gap-3 px-2 text-xl tracking-tight">
+                    <Activity className="text-primary" size={24} />
+                    Predictive Trajectories
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {currentDataset.predictions.map((p: any, idx: number) => (
+                      <Card key={idx} className="p-6 border border-border/40 shadow-xl bg-card hover:bg-muted/30 transition-all rounded-2xl group">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">{p.target}</span>
+                            <h4 className="font-bold text-foreground text-lg">{p.trend === 'up' ? 'Positive' : p.trend === 'down' ? 'Negative' : 'Stable'} Forecast</h4>
+                          </div>
+                          <div className={`p-2 rounded-xl ${p.trend === 'up' ? 'bg-emerald-500/10 text-emerald-500' : p.trend === 'down' ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary'}`}>
+                            {p.trend === 'up' ? <TrendingUp size={20} /> : p.trend === 'down' ? <AlertTriangle size={20} /> : <Activity size={20} />}
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed mb-4">{p.reasoning}</p>
+                        <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Confidence:</span>
+                            <span className={`text-[10px] font-black uppercase tracking-widest ${p.confidence === 'high' ? 'text-emerald-500' : p.confidence === 'medium' ? 'text-amber-500' : 'text-primary'}`}>{p.confidence}</span>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {Array.isArray(currentDataset.insights) && currentDataset.insights.length > 0 ? (
                   currentDataset.insights.map((item: any, i) => {
