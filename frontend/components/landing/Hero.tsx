@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Bot } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface MetricCardProps {
   title: string;
@@ -155,18 +156,20 @@ const Hero: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row items-center gap-4 animate-fade-in animation-delay-700">
-                <button
-                  className={`w-full sm:w-auto px-8 py-4 font-black uppercase tracking-tightest rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg group overflow-hidden relative ${
-                    isDarkMode
-                      ? "bg-blue-600 text-white shadow-blue-900/20"
-                      : "bg-blue-600 text-white shadow-blue-500/30"
-                  }`}
-                >
-                  <span className="relative z-10 block transition-transform duration-500 group-hover:translate-x-1">
-                    Analyze Now
-                  </span>
-                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                </button>
+                <Link href="/dashboard/welcome" className="w-full sm:w-auto">
+                  <button
+                    className={`w-full sm:w-auto px-8 py-4 font-black uppercase tracking-tightest rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg group overflow-hidden relative ${
+                      isDarkMode
+                        ? "bg-blue-600 text-white shadow-blue-900/20"
+                        : "bg-blue-600 text-white shadow-blue-500/30"
+                    }`}
+                  >
+                    <span className="relative z-10 block transition-transform duration-500 group-hover:translate-x-1">
+                      Analyze Now
+                    </span>
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                  </button>
+                </Link>
                 <button
                   className={`w-full sm:w-auto px-8 py-4 font-black uppercase tracking-tightest rounded-xl border transition-all hover:bg-white/5 active:scale-95 ${
                     isDarkMode

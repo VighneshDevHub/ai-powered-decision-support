@@ -27,7 +27,7 @@ interface SidebarProps {
 const menuItems = [
   { name: 'Welcome', href: '/dashboard/welcome', icon: Home },
   { name: 'Upload Data', href: '/dashboard/upload', icon: UploadCloud },
-  { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Overview', href: '/dashboard/overview', icon: LayoutDashboard },
   { name: 'Insights & Data', href: '/dashboard/insights', icon: BarChart2 },
   { name: 'Data Explorer', href: '/dashboard/explorer', icon: Database },
   { name: 'AI Assistant', href: '/dashboard/ai-assistant', icon: Sparkles },

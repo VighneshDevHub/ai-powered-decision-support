@@ -22,6 +22,7 @@ import {
 import { useUser } from '@clerk/nextjs';
 import { useDashboard } from '@/context/DashboardContext';
 import { useRouter } from 'next/navigation';
+import { Toast, ToastType } from '@/components/ui/Toast';
 
 export default function UploadPage() {
   const { user } = useUser();
@@ -33,8 +34,11 @@ export default function UploadPage() {
   const [sheetUrl, setSheetUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadType, setUploadType] = useState<'file' | 'google-sheet'>('file');
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+
+  const showToast = (message: string, type: ToastType = 'info') => {
+    setToast({ message, type });
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -58,13 +62,12 @@ export default function UploadPage() {
     if (!user) return;
     
     setIsUploading(true);
-    setError(null);
-    setSuccess(false);
+    showToast('Initializing neural data ingestion...', 'info');
 
     try {
       if (uploadType === 'file') {
         if (!file) {
-          setError('Please select a file first.');
+          showToast('Please select a file to continue.', 'error');
           setIsUploading(false);
           return;
         }
@@ -85,14 +88,13 @@ export default function UploadPage() {
             const errorData = await response.json();
             errorMessage = errorData.detail || errorMessage;
           } catch (e) {
-            // If not JSON, use the status text or a generic message
-            errorMessage = `Server Error (${response.status}): ${response.statusText || 'Internal Server Error'}`;
+            errorMessage = `Server Error (${response.status})`;
           }
           throw new Error(errorMessage);
         }
       } else {
         if (!sheetUrl) {
-          setError('Please enter a Google Sheet URL.');
+          showToast('Google Sheet URL is required.', 'error');
           setIsUploading(false);
           return;
         }
@@ -110,18 +112,18 @@ export default function UploadPage() {
         });
 
         if (!response.ok) {
-          let errorMessage = 'Processing Google Sheet failed';
+          let errorMessage = 'Processing failed';
           try {
             const errorData = await response.json();
             errorMessage = errorData.detail || errorMessage;
           } catch (e) {
-            errorMessage = `Server Error (${response.status}): ${response.statusText || 'Internal Server Error'}`;
+            errorMessage = `Server Error (${response.status})`;
           }
           throw new Error(errorMessage);
         }
       }
 
-      setSuccess(true);
+      showToast('Dataset synchronized successfully!', 'success');
       await Promise.all([refreshDocuments(), refreshProcessedData()]);
       
       // Clear form
@@ -131,11 +133,11 @@ export default function UploadPage() {
       
       // Redirect after success
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push('/dashboard/overview');
       }, 2000);
 
     } catch (err: any) {
-      setError(err.message || 'An error occurred during upload.');
+      showToast(err.message || 'An error occurred during upload.', 'error');
     } finally {
       setIsUploading(false);
     }
@@ -257,20 +259,6 @@ export default function UploadPage() {
                 </div>
               )}
 
-              {error && (
-                <div className="mt-8 p-6 bg-destructive/5 border border-destructive/20 rounded-2xl flex items-center gap-4 text-destructive animate-in slide-in-from-top-4 duration-300">
-                  <AlertCircle size={24} />
-                  <p className="text-sm font-bold tracking-tight uppercase tracking-widest">{error}</p>
-                </div>
-              )}
-
-              {success && (
-                <div className="mt-8 p-6 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl flex items-center gap-4 text-emerald-600 animate-in slide-in-from-top-4 duration-300">
-                  <CheckCircle2 size={24} />
-                  <p className="text-sm font-bold tracking-tight uppercase tracking-widest">Dataset synchronized successfully! Redirecting to command center...</p>
-                </div>
-              )}
-
               <Button 
                 className="w-full mt-10 h-18 text-xl font-black bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/30 rounded-2xl disabled:opacity-50 transition-all hover:scale-[1.01] active:scale-[0.99] uppercase tracking-widest"
                 onClick={handleUpload}
@@ -343,6 +331,14 @@ export default function UploadPage() {
           </Card>
         </div>
       </div>
+
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
     </div>
   );
 }

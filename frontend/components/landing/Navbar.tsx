@@ -176,7 +176,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                             </SignedOut>
                             <SignedIn>
                                 <Link
-                                    href="/dashboard"
+                                    href="/dashboard/welcome"
                                     className="hidden sm:block relative px-6 py-2.5 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 overflow-hidden bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-[0_8px_30px_rgba(59,130,246,0.3)] hover:scale-[1.05]"
                                 >
                                     Open Dashboard
@@ -252,7 +252,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme }) => {
                                 </SignedOut>
                                 <SignedIn>
                                     <Link
-                                        href="/dashboard"
+                                        href="/dashboard/welcome"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                         className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-black uppercase tracking-widest italic text-center shadow-[0_15px_40px_rgba(59,130,246,0.3)]"
                                     >

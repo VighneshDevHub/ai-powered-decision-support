@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Toast, ToastType } from '@/components/ui/Toast';
 import { 
   Bot, 
   User, 
@@ -65,6 +66,11 @@ export default function AIAssistantPage() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isGlobalMode, setIsGlobalMode] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+
+  const showToast = (message: string, type: ToastType = 'info') => {
+    setToast({ message, type });
+  };
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -135,6 +141,7 @@ export default function AIAssistantPage() {
       }
     } catch (error) {
       console.error('Chat error:', error);
+      showToast('Connection to Neural Engine lost. Retrying...', 'error');
       setMessages(prev => [...prev, { role: 'assistant', content: "I'm sorry, I encountered an error processing your request. Please try again later." }]);
     } finally {
       setIsSending(false);
@@ -143,6 +150,7 @@ export default function AIAssistantPage() {
 
   const clearChat = async () => {
     setMessages([]);
+    showToast('Neural memory cleared', 'info');
   };
 
   const suggestions = [
@@ -597,6 +605,14 @@ export default function AIAssistantPage() {
             </Card>
         </div>
       </div>
+
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
     </div>
   );
 }
