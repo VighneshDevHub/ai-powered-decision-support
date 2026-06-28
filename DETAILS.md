@@ -871,3 +871,175 @@ Add **Sentry** for error tracking and **OpenTelemetry** for distributed tracing.
 - Allow organizations to train local models on their data without it leaving their servers
 
 ---
+
+## 🏭 Technologies That Will Take This to the Next Level
+
+These are the specific tools and concepts — with justification — that would elevate Intellexa from a strong prototype to a production-grade, enterprise-ready platform.
+
+### AI & LLM Layer
+
+| Technology | Why It Belongs Here |
+|:-----------|:-------------------|
+| **LangChain / LlamaIndex** | Agent orchestration, tool use, multi-step reasoning chains, memory management — replaces the current raw prompt approach |
+| **Pinecone / Qdrant / Weaviate** | Vector database for semantic search over chunked documents — enables proper RAG instead of full-context injection |
+| **OpenAI Embeddings / `sentence-transformers`** | Convert document chunks to embeddings for vector retrieval |
+| **LangSmith** | LLM observability — trace every prompt, see token counts, debug hallucinations, A/B test prompts |
+| **Llama 3.3 / Llama 3.1 70B** | Upgrade from 8B to 70B for dramatically better reasoning on complex business datasets (still via Groq) |
+| **Anthropic Claude / GPT-4o** | Multi-model routing: use Claude for long-context analysis, GPT-4o for vision/multimodal, Llama for speed |
+| **DSPy** | Programmatic prompt optimization — auto-tune prompts to maximize structured output reliability |
+| **OpenAI Structured Outputs** | Replace the current `llm_call_fn` JSON extraction heuristics with guaranteed schema-compliant JSON responses |
+
+### ML & Data Science Layer
+
+| Technology | Why It Belongs Here |
+|:-----------|:-------------------|
+| **scikit-learn** | Classification, regression, clustering on actual data columns — real predictive models instead of LLM guessing trends |
+| **Prophet (Meta)** | Production-grade time-series forecasting — replace the current "first vs last value" trend metric |
+| **statsmodels** | ARIMA, SARIMA models for seasonal time series, statistical significance tests |
+| **PyOD** | Outlier/anomaly detection library — detect unusual rows in datasets before analysis |
+| **Polars** | Drop-in Pandas replacement with 10–100× performance on large files (Rust-based, lazy evaluation) |
+| **Great Expectations** | Data quality validation framework — replace the LLM-based quality analysis with deterministic rule-based checks |
+| **Apache Arrow** | In-memory columnar format for zero-copy data interchange between Python, databases, and APIs |
+
+### Backend & Infrastructure
+
+| Technology | Why It Belongs Here |
+|:-----------|:-------------------|
+| **Celery + Redis** | Async task queue — offload 5-LLM-call pipeline to background workers with retry, progress tracking |
+| **FastAPI WebSockets** | Real-time streaming responses for chat (word-by-word LLM output), live processing progress |
+| **AWS S3 / Cloudflare R2** | Persistent, scalable object storage — replace local `storage/` directory |
+| **Redis (caching)** | Cache processed analysis results; prevent re-running the pipeline on unchanged data |
+| **PostgreSQL + SQLAlchemy** | Relational database for structured metadata, team accounts, audit logs (complement MongoDB) |
+| **Alembic** | Database migration management for the PostgreSQL schema |
+| **Docker + Docker Compose** | Containerize backend + worker + Redis — reproducible dev and production environments |
+| **Kubernetes (K8s)** | Horizontal scaling of API pods + worker pods under load |
+| **Nginx** | Reverse proxy, SSL termination, request buffering, static file serving |
+| **GitHub Actions CI/CD** | Automated testing, linting, Docker builds, and deployment on every push |
+
+### Security
+
+| Technology | Why It Belongs Here |
+|:-----------|:-------------------|
+| **Clerk JWT + FastAPI Dependency** | Verify every API request with a signed JWT — close the current auth gap |
+| **slowapi / Redis-based rate limiting** | Protect LLM endpoints from cost abuse and DDoS |
+| **python-jose / PyJWT** | Lightweight alternative for JWT verification if moving away from Clerk SDK |
+| **Vault (HashiCorp) / AWS Secrets Manager** | Centralized secrets management — replace `.env` files in production |
+| **OWASP ZAP / Bandit** | Security scanning for the API and Python code |
+
+### Frontend
+
+| Technology | Why It Belongs Here |
+|:-----------|:-------------------|
+| **Zustand or TanStack Query** | Replace the manual `DashboardContext` fetch pattern with a proper cache + invalidation strategy |
+| **Vercel AI SDK** | Built-in streaming, `useChat` hook, tool call rendering — replaces the custom chat fetch logic |
+| **D3.js** | For highly custom, complex visualizations beyond what Recharts provides |
+| **shadcn/ui** | Production-quality accessible UI component library (built on Radix + Tailwind) |
+| **Storybook** | Component development and documentation in isolation |
+| **Vitest + Testing Library** | Unit and integration tests for React components |
+| **Playwright** | End-to-end browser tests for critical user flows (upload → analysis → chat) |
+
+### Observability & DevOps
+
+| Technology | Why It Belongs Here |
+|:-----------|:-------------------|
+| **Sentry** | Error tracking with stack traces, performance monitoring, release health |
+| **OpenTelemetry + Jaeger** | Distributed tracing across Next.js → FastAPI → Groq → MongoDB |
+| **Grafana + Prometheus** | Real-time metrics dashboards: API latency, LLM call durations, error rates |
+| **structlog** | Structured JSON logging for searchable, parseable production logs |
+| **Datadog / New Relic** | All-in-one APM if you want a managed solution |
+
+---
+
+## 🚢 Deployment
+
+### Backend — Render / Railway / Fly.io
+
+1. Set env vars: `GROQ_API_KEY`, `MONGODB_URI`
+2. Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+3. Root directory: `fastapi-backend/`
+
+> ⚠️ On Render free tier the filesystem is ephemeral. Processed files will be lost on restart. Use MongoDB or S3 for storage before deploying seriously.
+
+### Frontend — Vercel (recommended)
+
+1. Set all env vars (`NEXT_PUBLIC_*`, `CLERK_SECRET_KEY`)
+2. Build command: `pnpm build`
+3. Root directory: `frontend/`
+4. Update `NEXT_PUBLIC_API_BASE_URL` to your deployed backend URL
+
+### MongoDB Atlas
+
+1. Create free cluster at [mongodb.com/atlas](https://www.mongodb.com/atlas)
+2. Whitelist backend server IP (or `0.0.0.0/0` for dynamic IPs)
+3. Create a DB user and copy URI to `MONGODB_URI`
+4. Collections are auto-created on first use
+
+### Docker Compose (local)
+
+```yaml
+# docker-compose.yml (example)
+services:
+  backend:
+    build: ./fastapi-backend
+    ports: ["8000:8000"]
+    env_file: ./fastapi-backend/.env
+  frontend:
+    build: ./frontend
+    ports: ["3000:3000"]
+    env_file: ./frontend/.env.local
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+```
+
+---
+
+## 🤝 Contributing
+
+```bash
+# Fork the repo, then:
+git clone https://github.com/your-username/intellexa-ai.git
+git checkout -b feature/your-feature-name
+
+# Backend changes
+cd fastapi-backend
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+
+# Frontend changes
+cd frontend
+pnpm install && pnpm dev
+
+# Commit
+git commit -m "feat: short description"
+git push origin feature/your-feature-name
+# Open a Pull Request
+```
+
+**Tips:**
+- Use `http://localhost:8000/docs` for live API testing (Swagger UI)
+- MongoDB collections are auto-created on first use — no schema migrations needed for new fields
+- The `process_file_and_store()` function is the heart of the backend — start there to understand the full pipeline
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**.
+
+---
+
+<div align="center">
+
+**Built with 💜 by Vighnesh Salunkhe**
+
+*From raw data to executive insight — in seconds.*
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-black?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Groq](https://img.shields.io/badge/Groq-f34f29?style=flat-square&logoColor=white)](https://groq.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Clerk](https://img.shields.io/badge/Clerk-6C47FF?style=flat-square&logo=clerk&logoColor=white)](https://clerk.com/)
+
+</div>
